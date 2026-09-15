@@ -1,0 +1,169 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrains Mono", "JetBrainsMono Nerd Font", monospace;
+    font-weight: bold;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: transparent;
+}
+
+/* Общий стиль для каждого блока-пилюли (тёмный лесной фон) */
+#workspaces,
+#language,
+#custom-weather,
+#clock,
+#network,
+#cpu,
+#temperature,
+#pulseaudio,
+#battery,
+#custom-power,
+#custom-powermode,
+#custom-lid,
+#mpris {
+    background-color: rgba(19, 26, 22, 0.85);
+    padding: 3px 12px;
+    margin: 2px 3px;
+    border-radius: 10px;
+    border: 1px solid rgba(166, 227, 161, 0.12);
+}
+
+/* Воркспейсы */
+#workspaces {
+    padding: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    color: #64766a;
+    background: transparent;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+    color: #cddbd0;
+    background: rgba(166, 227, 161, 0.08);
+}
+
+#workspaces button.active,
+#workspaces button.focused {
+    color: #131a16;
+    background: #a6e3a1;
+    border-radius: 8px;
+}
+
+#workspaces button.urgent {
+    color: #131a16;
+    background: #e3c078;
+}
+
+/* Цветовые акценты модулей: зелёный / бирюзовый / янтарный */
+#language {
+    color: #59c2a5;
+}
+
+#custom-weather {
+    color: #e3c078;
+}
+
+#clock {
+    color: #cddbd0;
+    background-color: rgba(26, 35, 30, 0.95);
+    border: 1px solid rgba(227, 192, 120, 0.45);
+}
+
+#network.speed {
+    color: #93a598;
+}
+
+#cpu {
+    color: #e3c078;
+}
+
+#temperature {
+    color: #a6e3a1;
+}
+
+#temperature.critical {
+    color: #c9745c;
+    background-color: rgba(201, 116, 92, 0.15);
+}
+
+#network.wifi {
+    color: #59c2a5;
+}
+
+#pulseaudio {
+    color: #8fbf87;
+}
+
+#pulseaudio.muted {
+    color: #64766a;
+}
+
+#mpris {
+    color: #cddbd0;
+}
+
+#battery {
+    color: #a6e3a1;
+}
+
+#battery.charging {
+    color: #59c2a5;
+}
+
+#battery.warning:not(.charging) {
+    color: #e3c078;
+}
+
+#battery.critical:not(.charging) {
+    color: #c9745c;
+    animation-name: blink;
+    animation-duration: 0.8s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        background-color: #c9745c;
+        color: #131a16;
+    }
+}
+
+/* Режим высокой производительности — терракота */
+#custom-powermode.performance {
+    color: #c9745c;
+    border-color: rgba(201, 116, 92, 0.4);
+}
+
+/* Режим энергосбережения — мягкий зеленый */
+#custom-powermode.power-saver {
+    color: #a6e3a1;
+    border-color: rgba(166, 227, 161, 0.4);
+}
+
+/* Сбалансированный режим (если включится) — бирюзовый */
+#custom-powermode.balanced {
+    color: #59c2a5;
+    border-color: rgba(89, 194, 165, 0.4);
+}
+
+/* Крышка: сон при закрытии включён — мягкий зелёный */
+#custom-lid.lid-sleep {
+    color: #a6e3a1;
+    border-color: rgba(166, 227, 161, 0.4);
+}
+
+/* Крышка: сон при закрытии выключен — приглушённый серый */
+#custom-lid.lid-nosleep {
+    color: #64766a;
+    border-color: rgba(166, 227, 161, 0.12);
+}

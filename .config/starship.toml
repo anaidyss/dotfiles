@@ -1,0 +1,41 @@
+# промпт в две строки
+format = """
+$directory\
+$git_branch\
+$git_status\
+$line_break\
+$character"""
+
+add_newline = false
+
+[directory]
+# желтая пилюля с папкой
+style = "bg:yellow fg:black bold"
+format = '[](fg:yellow)[  $path ]($style)[](fg:yellow) '
+truncation_length = 3
+truncation_symbol = "…/"
+home_symbol = "~"
+
+[git_branch]
+# ветка — тоже пилюлей, янтарная
+style = "bg:bright-yellow fg:black bold"
+format = '[](fg:bright-yellow)[  $branch ]($style)[](fg:bright-yellow) '
+
+[git_status]
+# статус иконками, без фона
+style = "fg:bright-yellow bold"
+format = '[$all_status$ahead_behind]($style) '
+conflicted = " "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕ "
+untracked = " "
+modified = " "
+staged = " "
+renamed = " "
+deleted = " "
+
+[character]
+# стрелка краснеет если команда упала
+success_symbol = "[❯](bold yellow) "
+error_symbol = "[❯](bold red) "

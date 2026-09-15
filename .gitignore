@@ -1,0 +1,8 @@
+*.bak
+*.log
+__pycache__/
+.config/fish/fish_variables
+.config/fish/completions/
+.config/secrets/
+.local/share/veil/venv/
+.local/share/veil/protocols/

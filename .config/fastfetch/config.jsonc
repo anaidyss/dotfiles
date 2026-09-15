@@ -1,0 +1,136 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+      "source": "fedora",
+      "type": "small",
+      "color": {
+        "1": "#59c2a5",
+        "2": "#a6e3a1",
+        "3": "#5f9790"
+      },
+      "padding": {
+        "top": 1,
+        "left": 2,
+        "right": 3
+      }
+    },
+  "display": {
+    "separator": " 󰄾 "
+  },
+  "modules": [
+    {
+      "type": "title",
+      "color": {
+        "user": "#a6e3a1",
+        "at": "#64766a",
+        "host": "#59c2a5"
+      }
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;89;194;165m╒═════════════════════════  System ════════════════════════╕\u001b[0m"
+    },
+    {
+      "type": "os",
+      "key": "   OS",
+      "keyColor": "#a6e3a1"
+    },
+    {
+      "type": "kernel",
+      "key": "   Kernel",
+      "keyColor": "#a6e3a1"
+    },
+    {
+      "type": "uptime",
+      "key": "  󰅐 Uptime",
+      "keyColor": "#59c2a5"
+    },
+    {
+      "type": "de",
+      "key": "  󰧨 DE",
+      "keyColor": "#59c2a5"
+    },
+    {
+      "type": "packages",
+      "key": "  󰏖 Packages",
+      "keyColor": "#a6e3a1"
+    },
+    {
+      "type": "shell",
+      "key": "   Shell",
+      "keyColor": "#e3c078"
+    },
+    {
+      "type": "terminal",
+      "key": "   Terminal",
+      "keyColor": "#e3c078"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;89;194;165m╘════════════════════════════════════════════════════════════╛\u001b[0m"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;166;227;161m╒════════════════════════ 󰢮 Hardware ════════════════════════╕\u001b[0m"
+    },
+    {
+      "type": "cpu",
+      "key": "   CPU",
+      "keyColor": "#c9745c",
+      "format": "{1} @ {7} - {8}",
+      "temp": true
+    },
+    {
+      "type": "gpu",
+      "key": "  󰢮 GPU",
+      "keyColor": "#c9745c"
+    },
+    {
+      "type": "display",
+      "key": "  󰍹 Screen",
+      "keyColor": "#a6e3a1"
+    },
+    {
+      "type": "memory",
+      "key": "  󰍛 Memory",
+      "keyColor": "#e3c078"
+    },
+    // системный диск
+    {
+      "type": "disk",
+      "folders": "/", 
+      "key": "   Fedora",
+      "keyColor": "#59c2a5"
+    },
+    
+    // ntfs-раздел с данными
+    {
+      "type": "disk",
+      "folders": "/run/media/anaidyss/805C94315C942446",
+      "key": "   Windows",
+      "keyColor": "#5f9790"
+    },
+    {
+      "type": "battery",
+      "key": "  󰂀 Battery",
+      "keyColor": "#a6e3a1",
+      "temp": false
+    },
+    {
+      "type": "localip",
+      "key": "  󰩟 Local IP",
+      "keyColor": "#a6e3a1",
+      "showIpv6": false
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;166;227;161m╘════════════════════════════════════════════════════════════╛\u001b[0m"
+    },
+    "break",
+    {
+      "type": "colors",
+      "symbol": "circle"
+    }
+  ]
+}

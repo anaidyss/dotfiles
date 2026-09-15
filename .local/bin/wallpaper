@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="${WALLPAPER_DIR:-$HOME/Pictures/Wallpapers}"
+LINK="$DIR/wallpaper.jpg"
+MODE="${WALLPAPER_MODE:-fill}"
+
+die() { echo "wallpaper: $*" >&2; exit 1; }
+
+usage() {
+    cat <<EOF
+Usage: wallpaper [command] [arg]
+
+Commands:
+  (none)        interactive: list and pick
+  list          list wallpapers (* = current)
+  <n|name>      set by index or filename (absolute paths ok)
+  next / prev   cycle
+  random        random wallpaper
+  current       show current
+EOF
+}
+
+files() {
+    find "$DIR" -maxdepth 1 -type f \
+        \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) \
+        ! -name "$(basename "$LINK")" -printf '%f\n' | sort
+}
+
+current() { basename "$(readlink -f "$LINK" 2>/dev/null || true)"; }
+
+apply() {
+    local f="$1"
+    if [[ "$f" =~ ^[0-9]+$ ]]; then
+        mapfile -t arr < <(files)
+        (( f >= 1 && f <= ${#arr[@]} )) || die "index out of range (1-${#arr[@]})"
+        f="${arr[f-1]}"
+    fi
+    [[ "$f" = /* ]] || f="$DIR/$f"
+    [[ -f "$f" ]] || die "not found: $1"
+    ln -sfn "$f" "$LINK"
+    pkill -x swaybg 2>/dev/null || true
+    nohup swaybg -i "$LINK" -m "$MODE" >/dev/null 2>&1 &
+    echo "set: $(basename "$f")"
+}
+
+list() {
+    local cur i=1 f
+    cur="$(current)"
+    while IFS= read -r f; do
+        [[ "$f" = "$cur" ]] && printf '%2d) %s *\n' "$i" "$f" || printf '%2d) %s\n' "$i" "$f"
+        ((i++))
+    done < <(files)
+}
+
+shift_by() {
+    local cur idx=-1 i d="$1"
+    mapfile -t arr < <(files)
+    ((${#arr[@]} > 0)) || die "no wallpapers in $DIR"
+    cur="$(current)"
+    for i in "${!arr[@]}"; do [[ "${arr[i]}" = "$cur" ]] && idx=$i && break; done
+    ((idx == -1)) && idx=0 || idx=$(( (idx + d + ${#arr[@]}) % ${#arr[@]} ))
+    apply "${arr[idx]}"
+}
+
+case "${1:-}" in
+    "")
+        if [[ -t 0 ]]; then
+            list
+            printf 'number/name (Enter to cancel): '
+            read -r sel || true
+            [[ -n "$sel" ]] && apply "$sel"
+        else
+            list
+        fi
+        ;;
+    list|ls) list ;;
+    next) shift_by 1 ;;
+    prev) shift_by -1 ;;
+    random|rand)
+        mapfile -t arr < <(files)
+        ((${#arr[@]} > 0)) || die "no wallpapers in $DIR"
+        apply "${arr[RANDOM % ${#arr[@]}]}"
+        ;;
+    current) current ;;
+    -h|--help|help) usage ;;
+    *) apply "$1" ;;
+esac

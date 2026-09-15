@@ -1,0 +1,132 @@
+input {
+    keyboard {
+        xkb {
+            layout "us,ru"
+            options "grp:alt_shift_toggle,caps:escape"
+        }
+    }
+}
+
+
+spawn-at-startup "waybar"
+spawn-at-startup "sh" "-c" "sleep 0.5 && swaybg -i /home/anaidyss/Pictures/Wallpapers/wallpaper.jpg -m fill"
+spawn-at-startup "swayosd-server"
+
+
+// Внешний вид: скругления, отступы и обводка
+workspace "1"
+workspace "2"
+workspace "3"
+workspace "4"
+workspace "5"
+workspace "6"
+workspace "7"
+
+
+layout {
+    gaps 12
+    center-focused-column "never"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+	proportion 1.0
+    }
+
+    default-column-width { proportion 0.5; }
+
+    focus-ring {
+        off
+    }
+
+    border {
+        width 2
+        active-color "#a6e3a1"
+        inactive-color "transparent"
+	urgent-color "#e3c078"
+    }
+
+
+    // Отключаем тени, чтобы цвет рамки не рассеивался под окно
+    shadow {
+        off
+    }
+}
+
+
+// Прозрачность и скругления окон
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+    opacity 0.90
+    draw-border-with-background false
+}
+
+
+// клавиатура (Mod = Super)
+binds {
+    // запуск всего
+    Mod+Return  { spawn "kitty"; }
+    Mod+D       { spawn "fuzzel"; }
+    Print       { spawn "/home/anaidyss/.local/bin/screenshot-area.sh"; }
+    Mod+Shift+S { spawn "/home/anaidyss/.local/bin/screenshot-area.sh"; }
+    Mod+Shift+E { quit; }
+    Mod+Shift+P { spawn "/home/anaidyss/.config/niri/lock.sh"; } // hyprlock
+    Mod+Shift+V { spawn "/home/anaidyss/.local/bin/veil-lock"; } // veil
+
+    // окна
+    Mod+Q       { close-window; }
+    Mod+F       { fullscreen-window; }
+    Mod+Space   { toggle-window-floating; }
+    Mod+R       { switch-preset-column-width; }
+
+    // фокус hjkl
+    Mod+H { focus-column-left; }
+    Mod+L { focus-column-right; }
+    Mod+J { focus-window-down; }
+    Mod+K { focus-window-up; }
+
+    // перемещение
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { move-column-right; }
+
+    // окно вверх/вниз, и shift и ctrl — обе оставил по привычке
+    Mod+Shift+J { move-window-down; }
+    Mod+Shift+K { move-window-up; }
+    Mod+Ctrl+J  { move-window-down; }
+    Mod+Ctrl+K  { move-window-up; }
+
+    // стэкинг
+    Mod+W { consume-window-into-column; } // затянуть соседа в колонку
+    Mod+E { expel-window-from-column; }   // вытолкнуть обратно
+
+    // воркспейсы
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+    Mod+Shift+6 { move-column-to-workspace 6; }
+    Mod+Shift+7 { move-column-to-workspace 7; }
+    Mod+Shift+8 { move-column-to-workspace 8; }
+    Mod+Shift+9 { move-column-to-workspace 9; }
+
+    // громкость и яркость через swayosd
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "raise"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "lower"; }
+    XF86AudioMute        allow-when-locked=true { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
+
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "swayosd-client" "--brightness" "raise"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "swayosd-client" "--brightness" "lower"; }
+}

@@ -1,0 +1,15 @@
+default-timeout=2500
+font=JetBrains Mono 10
+background-color=#131a16ee
+text-color=#cddbd0
+width=350
+height=150
+margin=20
+padding=15
+border-size=2
+border-radius=8
+
+border-color=#e3c078
+
+[urgency=high]
+border-color=#c9745c

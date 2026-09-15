@@ -1,0 +1,134 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "margin-top": 6,
+    "margin-left": 10,
+    "margin-right": 10,
+    "spacing": 6,
+
+    "modules-left": [
+        "custom/power",
+        "niri/workspaces",
+        "custom/powermode",
+        "custom/lid",
+        "mpris"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "network#speed",
+        "network#wifi",
+        "pulseaudio",
+        "niri/language",
+        "battery"
+    ],
+
+    "niri/workspaces": {
+        "format": "{index}",
+        "on-click": "activate"
+    },
+
+    "niri/language": {
+        "format": " {}",
+        "format-en": "EN",
+        "format-ru": "RU"
+    },
+
+    "custom/weather": {
+        "format": "{}",
+        "tooltip": true,
+        "interval": 1800,
+        "exec": "curl -s 'https://wttr.in/?format=1' || echo '🌤️ N/A'"
+    },
+
+    "clock": {
+        "interval": 1,
+        "format": " {:%H:%M:%S  󰸗 %d.%m.%Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "network#speed": {
+        "interval": 1,
+        "format": " {bandwidthDownBytes}  {bandwidthUpBytes}",
+        "tooltip-format": "Интерфейс: {ifname}\nIP: {ipaddr}"
+    },
+
+    "cpu": {
+        "interval": 2,
+        "format": " {usage}%",
+    },
+
+    "temperature": {
+        "critical-threshold": 80,
+        "format": " {temperatureC}°C",
+        "format-critical": " {temperatureC}°C"
+    },
+
+    "network#wifi": {
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-ethernet": "󰈀 Wired",
+        "format-linked": "󰈀 {ifname} (No IP)",
+        "format-disconnected": "󰤭 Offline",
+        "tooltip-format": "{ifname} via {gwaddr} 󰊗",
+        "on-click": "kitty -e nmtui"
+    },
+
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 Muted",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "default": ["", "", ""]
+        },
+        "scroll-step": 3,
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+    },
+
+    "mpris": {
+        "format": "{player_icon} {title} - {artist}",
+        "format-paused": "{status_icon} <i>{title}</i>",
+        "player-icons": { "default": "⏸" },
+        "status-icons": { "paused": "▶" },
+        "max-length": 30
+    },
+
+    "custom/powermode": {
+        "exec": "/home/anaidyss/.config/waybar/status_pm.sh",
+        "return-type": "json",
+        "interval": 1,
+        "format": "{}",
+        "on-click": "/home/anaidyss/.config/waybar/toggle_pm.sh",
+        "tooltip": false
+    },
+    
+    "custom/lid": {
+        "exec": "/home/anaidyss/.config/waybar/status_lid.sh",
+        "return-type": "json",
+        "interval": 1,
+        "format": "{}",
+        "on-click": "/home/anaidyss/.config/waybar/toggle_lid.sh",
+        "tooltip": false
+    },
+
+    "custom/power": {
+        "format": "",
+        "tooltip": "ЛКМ: V.E.I.L. · ПКМ: Forest (hyprlock)",
+        "on-click": "/home/anaidyss/.local/bin/veil-lock",
+        "on-click-right": "/home/anaidyss/.config/niri/lock.sh"
+    },
+    "battery": {
+        "interval": 15,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"]
+    }
+}

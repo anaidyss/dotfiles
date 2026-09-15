@@ -1,0 +1,11 @@
+[Unit]
+Description=Suspend on lid close (waybar toggle)
+
+[Service]
+Type=simple
+ExecStart=%h/.config/waybar/lid-watcher.sh
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target
