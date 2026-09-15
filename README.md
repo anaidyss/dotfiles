@@ -7,7 +7,7 @@ fedora 44 + niri. всё в одной палитре ("forest"):
 - бар: waybar + swayosd
 - терминал: kitty, fish, starship
 - лаунчер: fuzzel
-- блокировка: hyprlock (forest) и veil — свой локскрин на ext-session-lock-v1 (python)
+- блокировка: hyprlock (forest) и veil (отдельное репо)
 - редактор: nvim, lazy.nvim + gruvbox с переопределённой палитрой
 - остальное: fastfetch, btop, yazi, bat, eza, zoxide, mako
 
@@ -21,21 +21,9 @@ fedora 44 + niri. всё в одной палитре ("forest"):
 
 ## veil
 
-сам локскрин — .local/share/veil/veil_lock.py, запускается через ~/.local/bin/veil-lock.
-нужен отдельный venv:
-
-    python3 -m venv ~/.local/share/veil/venv
-    ~/.local/share/veil/venv/bin/pip install pywayland psutil python-pam pillow
-
-биндинги протоколов генерируются из xml/ (wayland.xml + ext-session-lock-v1.xml):
-
-    cd ~/.local/share/veil
-    venv/bin/python -m pywayland.scanner -i xml/wayland.xml xml/ext-session-lock-v1.xml -o protocols
-
-если локер умрёт в заблокированном состоянии, niri сессию не отпустит —
-выход через TTY: Ctrl+Alt+F3 и `XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-1 hyprlock`.
-
-старая tui-версия для терминала: ~/.local/bin/veil_ui.py (нужен python3-textual).
+локскрин veil (ext-session-lock-v1, python) лежит отдельно:
+https://github.com/anaidyss/veil — ставится своим install.sh,
+бинд в niri: Mod+Shift+V.
 
 ## lid-sleep
 
