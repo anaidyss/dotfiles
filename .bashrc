@@ -23,11 +23,11 @@ if [ -d ~/.bashrc.d ]; then
     done
 fi
 unset rc
-# Делаем так, чтобы простой ввод eza сразу рисовал дерево с иконками
+# make plain eza draw a tree with icons right away
 alias eza='eza -l --tree --icons'
-alias wp='wallpaper'  # смена обоев: wp / wp list / wp next / wp random
+alias wp='wallpaper'  # wallpaper switching: wp / wp list / wp next / wp random
 
-# Секреты (API-ключи и т.п.) — в отдельном файле с правами 600, не коммитить
+# secrets (api keys etc) in a separate file with 600 perms, don't commit
 if [ -f ~/.config/secrets/env ]; then
     set -a
     . ~/.config/secrets/env

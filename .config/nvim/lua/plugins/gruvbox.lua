@@ -21,7 +21,7 @@ return {
       invert_intend_guides = false,
       inverse = true,
       contrast = "soft",
-      -- палитра в цвет forest-темы: зелёный #a6e3a1, бирюза #59c2a5, янтарь #e3c078
+      -- palette matched to the forest theme: green #a6e3a1, teal #59c2a5, amber #e3c078
       palette_overrides = {
         dark0_hard = "#0f1512",
         dark0 = "#131a16",
@@ -87,7 +87,7 @@ return {
         light_aqua_soft = "#99d0c0",
       },
       overrides = {},
-      transparent_mode = true, -- прозрачный фон
+      transparent_mode = true, -- transparent background
     })
     vim.cmd("colorscheme gruvbox")
   end,

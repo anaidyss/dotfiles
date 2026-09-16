@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# копирует конфиги на места. без симлинков, все по-простому
+# copies configs into place. no symlinks, keeping it simple
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -13,4 +13,4 @@ chmod +x ~/.local/bin/* ~/.config/niri/*.sh ~/.config/waybar/*.sh
 
 systemctl --user daemon-reload
 
-echo "готово. veil ставится отдельно из своего репо"
+echo "done. veil is installed separately from its own repo"

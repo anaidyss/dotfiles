@@ -11,7 +11,7 @@ window#waybar {
     background-color: transparent;
 }
 
-/* Общий стиль для каждого блока-пилюли (тёмный лесной фон) */
+/* shared style for every pill block (dark forest background) */
 #workspaces,
 #language,
 #custom-weather,
@@ -32,7 +32,7 @@ window#waybar {
     border: 1px solid rgba(166, 227, 161, 0.12);
 }
 
-/* Воркспейсы */
+/* workspaces */
 #workspaces {
     padding: 0 4px;
 }
@@ -62,7 +62,7 @@ window#waybar {
     background: #e3c078;
 }
 
-/* Цветовые акценты модулей: зелёный / бирюзовый / янтарный */
+/* module color accents: green / teal / amber */
 #language {
     color: #59c2a5;
 }
@@ -138,31 +138,31 @@ window#waybar {
     }
 }
 
-/* Режим высокой производительности — терракота */
+/* high performance mode: terracotta */
 #custom-powermode.performance {
     color: #c9745c;
     border-color: rgba(201, 116, 92, 0.4);
 }
 
-/* Режим энергосбережения — мягкий зеленый */
+/* power saver mode: soft green */
 #custom-powermode.power-saver {
     color: #a6e3a1;
     border-color: rgba(166, 227, 161, 0.4);
 }
 
-/* Сбалансированный режим (если включится) — бирюзовый */
+/* balanced mode (if it ever kicks in): teal */
 #custom-powermode.balanced {
     color: #59c2a5;
     border-color: rgba(89, 194, 165, 0.4);
 }
 
-/* Крышка: сон при закрытии включён — мягкий зелёный */
+/* lid: sleep on close enabled: soft green */
 #custom-lid.lid-sleep {
     color: #a6e3a1;
     border-color: rgba(166, 227, 161, 0.4);
 }
 
-/* Крышка: сон при закрытии выключен — приглушённый серый */
+/* lid: sleep on close disabled: muted gray */
 #custom-lid.lid-nosleep {
     color: #64766a;
     border-color: rgba(166, 227, 161, 0.12);

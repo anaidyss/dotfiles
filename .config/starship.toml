@@ -1,4 +1,4 @@
-# промпт в две строки
+# two-line prompt
 format = """
 $directory\
 $git_branch\
@@ -9,7 +9,7 @@ $character"""
 add_newline = false
 
 [directory]
-# желтая пилюля с папкой
+# yellow pill with the folder
 style = "bg:yellow fg:black bold"
 format = '[](fg:yellow)[  $path ]($style)[](fg:yellow) '
 truncation_length = 3
@@ -17,12 +17,12 @@ truncation_symbol = "…/"
 home_symbol = "~"
 
 [git_branch]
-# ветка — тоже пилюлей, янтарная
+# branch as a pill too, amber
 style = "bg:bright-yellow fg:black bold"
 format = '[](fg:bright-yellow)[  $branch ]($style)[](fg:bright-yellow) '
 
 [git_status]
-# статус иконками, без фона
+# status as icons, no background
 style = "fg:bright-yellow bold"
 format = '[$all_status$ahead_behind]($style) '
 conflicted = " "
@@ -36,6 +36,6 @@ renamed = " "
 deleted = " "
 
 [character]
-# стрелка краснеет если команда упала
+# the arrow turns red if the command failed
 success_symbol = "[❯](bold yellow) "
 error_symbol = "[❯](bold red) "

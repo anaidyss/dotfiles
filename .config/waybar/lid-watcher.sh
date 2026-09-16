@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Следит за состоянием крышки и усыпляет ноут при переходе open -> closed.
-# Работает только пока запущен пользовательский сервис lid-sleep.service.
+# watches the lid state and suspends the laptop on open -> closed.
+# only works while the lid-sleep.service user service is running.
 
 state_file=""
 for f in /proc/acpi/button/lid/*/state; do

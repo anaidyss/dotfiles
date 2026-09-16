@@ -1,4 +1,4 @@
-# Forest theme — matches kitty/waybar/fuzzel/bat palette
+# Forest theme: matches kitty/waybar/fuzzel/bat palette
 # bg #131a16 | fg #cddbd0 | green #a6e3a1 | teal #59c2a5 | amber #e3c078 | terra #c9745c | purple #a48bb5
 
 [flavor]
@@ -107,37 +107,37 @@ rules = [
 	{ url = "*", is = "dummy", bg = "#c9745c" },
 	{ url = "*/", is = "dummy", bg = "#c9745c" },
 	{ url = "*", is = "link", fg = "#7fb8ad", italic = true },
-	# Executables — teal
+	# Executables: teal
 	{ url = "*", is = "exec", fg = "#59c2a5", bold = true },
-	# Images — soft purple
+	# Images: soft purple
 	{ mime = "image/*", fg = "#c2a8cf" },
-	# Audio — purple
+	# Audio: purple
 	{ mime = "audio/*", fg = "#a48bb5" },
-	# Video — purple bold
+	# Video: purple bold
 	{ mime = "video/*", fg = "#a48bb5", bold = true },
-	# Archives — amber
+	# Archives: amber
 	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#e3c078", bold = true },
-	# Documents — terracotta
+	# Documents: terracotta
 	{ mime = "**/application/{pdf,doc,rtf,msword,*wordprocessingml*,*spreadsheetml*,*presentationml*,epub*,*ms-*}", fg = "#d99a82" },
 	{ mime = "text/*", fg = "#cddbd0" },
-	# Code — light teal
+	# Code: light teal
 	{ url = "*.{rs,go,py,c,h,cpp,hpp,cc,cxx,cs,java,js,jsx,mjs,cjs,ts,tsx,lua,sh,bash,zsh,fish,rb,php,swift,kt,kts,zig,nim,hs,ex,exs,erl,ml,r,pl,pm,m,v,sv,asm,s,sql}", fg = "#6fd0b3" },
-	# Markup / web — soft green
+	# Markup / web: soft green
 	{ url = "*.{html,htm,css,scss,sass,less,svg,xml,vue,svelte,astro}", fg = "#8fbf87" },
-	# Config / data — amber-brown
+	# Config / data: amber-brown
 	{ url = "*.{json,jsonc,toml,yaml,yml,ini,conf,cfg,env,properties,lock,nix}", fg = "#d9b36a" },
-	# Docs source / text — yellow
+	# Docs source / text: yellow
 	{ url = "*.{md,markdown,txt,text,log,rst,tex}", fg = "#e3c078" },
-	# Special XDG dirs — amber
+	# Special XDG dirs: amber
 	{ url = "{Desktop,Documents,Downloads,Music,Pictures,Public,Videos,Templates,Applications,Movies,Library,Development}/", fg = "#e3c078", bold = true },
-	# Directories — forest green
+	# Directories: forest green
 	{ url = "*/", fg = "#a6e3a1", bold = true },
 	{ mime = "inode/directory", fg = "#a6e3a1", bold = true },
-	# Dotfiles — muted gray-green
+	# Dotfiles: muted gray-green
 	{ url = ".*", fg = "#93a598" },
 ]
 
-# Icons — default glyphs recolored to the forest palette
+# Icons: default glyphs recolored to the forest palette
 [icon]
 globs = []
 dirs = [

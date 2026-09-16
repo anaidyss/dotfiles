@@ -13,7 +13,7 @@ spawn-at-startup "sh" "-c" "sleep 0.5 && swaybg -i /home/anaidyss/Pictures/Wallp
 spawn-at-startup "swayosd-server"
 
 
-// Внешний вид: скругления, отступы и обводка
+// looks: rounding, gaps and border
 workspace "1"
 workspace "2"
 workspace "3"
@@ -48,14 +48,14 @@ layout {
     }
 
 
-    // Отключаем тени, чтобы цвет рамки не рассеивался под окно
+    // shadows off so the border color doesn't bleed under the window
     shadow {
         off
     }
 }
 
 
-// Прозрачность и скругления окон
+// window transparency and rounding
 window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
@@ -64,9 +64,9 @@ window-rule {
 }
 
 
-// клавиатура (Mod = Super)
+// keyboard (Mod = Super)
 binds {
-    // запуск всего
+    // launching stuff
     Mod+Return  { spawn "kitty"; }
     Mod+D       { spawn "fuzzel"; }
     Print       { spawn "/home/anaidyss/.local/bin/screenshot-area.sh"; }
@@ -75,33 +75,33 @@ binds {
     Mod+Shift+P { spawn "/home/anaidyss/.config/niri/lock.sh"; } // hyprlock
     Mod+Shift+V { spawn "/home/anaidyss/.local/bin/veil-lock"; } // veil
 
-    // окна
+    // windows
     Mod+Q       { close-window; }
     Mod+F       { fullscreen-window; }
     Mod+Space   { toggle-window-floating; }
     Mod+R       { switch-preset-column-width; }
 
-    // фокус hjkl
+    // focus hjkl
     Mod+H { focus-column-left; }
     Mod+L { focus-column-right; }
     Mod+J { focus-window-down; }
     Mod+K { focus-window-up; }
 
-    // перемещение
+    // moving around
     Mod+Shift+H { move-column-left; }
     Mod+Shift+L { move-column-right; }
 
-    // окно вверх/вниз, и shift и ctrl — обе оставил по привычке
+    // window up/down, kept both shift and ctrl out of habit
     Mod+Shift+J { move-window-down; }
     Mod+Shift+K { move-window-up; }
     Mod+Ctrl+J  { move-window-down; }
     Mod+Ctrl+K  { move-window-up; }
 
-    // стэкинг
-    Mod+W { consume-window-into-column; } // затянуть соседа в колонку
-    Mod+E { expel-window-from-column; }   // вытолкнуть обратно
+    // stacking
+    Mod+W { consume-window-into-column; } // pull the neighbor into the column
+    Mod+E { expel-window-from-column; }   // push it back out
 
-    // воркспейсы
+    // workspaces
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
@@ -122,7 +122,7 @@ binds {
     Mod+Shift+8 { move-column-to-workspace 8; }
     Mod+Shift+9 { move-column-to-workspace 9; }
 
-    // громкость и яркость через swayosd
+    // volume and brightness via swayosd
     XF86AudioRaiseVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "raise"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "lower"; }
     XF86AudioMute        allow-when-locked=true { spawn "swayosd-client" "--output-volume" "mute-toggle"; }

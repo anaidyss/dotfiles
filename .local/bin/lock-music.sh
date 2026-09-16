@@ -1,6 +1,6 @@
 #!/bin/sh
-# Музыка (MPRIS) для Forest Lock — тихий текст, без иконок
-# Ничего не играет — ничего не показываем
+# music (mpris) for the forest lock: quiet text, no icons
+# nothing playing, nothing shown
 
 title=$(playerctl metadata --format '{{title}}' 2>/dev/null)
 artist=$(playerctl metadata --format '{{artist}}' 2>/dev/null)

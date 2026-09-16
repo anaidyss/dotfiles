@@ -1,5 +1,5 @@
-# Forest theme — зелёный #a6e3a1 / бирюзовый #59c2a5 / янтарный #e3c078
-# База: тёмный лесной #131a16, ошибки: терракота #c9745c
+# Forest theme: green #a6e3a1 / teal #59c2a5 / amber #e3c078
+# base: dark forest #131a16, errors: terracotta #c9745c
 
 theme[main_bg]="#131a16"
 theme[main_fg]="#cddbd0"

@@ -52,7 +52,7 @@
     "network#speed": {
         "interval": 1,
         "format": " {bandwidthDownBytes}  {bandwidthUpBytes}",
-        "tooltip-format": "Интерфейс: {ifname}\nIP: {ipaddr}"
+        "tooltip-format": "interface: {ifname}\nIP: {ipaddr}"
     },
 
     "cpu": {
@@ -116,7 +116,7 @@
 
     "custom/power": {
         "format": "",
-        "tooltip": "ЛКМ: V.E.I.L. · ПКМ: Forest (hyprlock)",
+        "tooltip": "LMB: V.E.I.L. · RMB: Forest (hyprlock)",
         "on-click": "/home/anaidyss/.local/bin/veil-lock",
         "on-click-right": "/home/anaidyss/.config/niri/lock.sh"
     },

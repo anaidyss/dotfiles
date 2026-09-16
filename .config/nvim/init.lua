@@ -12,8 +12,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- плагины в lua/plugins
+-- plugins live in lua/plugins
 require("lazy").setup("plugins")
 
--- системный буфер
+-- system clipboard
 vim.opt.clipboard = "unnamedplus"
