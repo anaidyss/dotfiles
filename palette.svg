@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="100" viewBox="0 0 900 100" font-family="JetBrains Mono, DejaVu Sans Mono, monospace">
+  <rect x="0.5" y="0.5" width="899" height="99" rx="12" fill="#131a16" stroke="#24322a"/>
+  <text x="24" y="30" font-size="13" fill="#4f6157">forest palette</text>
+
+  <rect x="24" y="42" width="104" height="30" rx="8" fill="#1d2721" stroke="#2a382f"/>
+  <text x="76" y="88" font-size="11" fill="#4f6157" text-anchor="middle">#131a16 bg</text>
+
+  <rect x="148" y="42" width="104" height="30" rx="8" fill="#cddbd0"/>
+  <text x="200" y="88" font-size="11" fill="#4f6157" text-anchor="middle">#cddbd0 fg</text>
+
+  <rect x="272" y="42" width="104" height="30" rx="8" fill="#a6e3a1"/>
+  <text x="324" y="88" font-size="11" fill="#4f6157" text-anchor="middle">#a6e3a1 green</text>
+
+  <rect x="396" y="42" width="104" height="30" rx="8" fill="#59c2a5"/>
+  <text x="448" y="88" font-size="11" fill="#4f6157" text-anchor="middle">#59c2a5 teal</text>
+
+  <rect x="520" y="42" width="104" height="30" rx="8" fill="#e3c078"/>
+  <text x="572" y="88" font-size="11" fill="#4f6157" text-anchor="middle">#e3c078 amber</text>
+
+  <rect x="644" y="42" width="104" height="30" rx="8" fill="#c9745c"/>
+  <text x="696" y="88" font-size="11" fill="#4f6157" text-anchor="middle">#c9745c terra</text>
+
+  <rect x="768" y="42" width="104" height="30" rx="8" fill="#a48bb5"/>
+  <text x="820" y="88" font-size="11" fill="#4f6157" text-anchor="middle">#a48bb5 purple</text>
+</svg>
