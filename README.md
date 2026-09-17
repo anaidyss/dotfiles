@@ -2,6 +2,7 @@
 
 fedora 44 + niri. every app themed to one "forest" palette.
 
+![forest demo](assets/demo.gif)
 ![forest palette](palette.svg)
 
 ## what's inside
@@ -52,3 +53,7 @@ install.sh    copies everything into place
 - **lock-music / lock-battery**: hyprlock widgets, mpris metadata and
   battery with color depending on the charge
 - **screenshot-area**: region screenshot, bound to Print and Mod+Shift+S
+
+the demo gif is a real session: assets/demo.sh runs fastfetch, eza and bat
+against this repo, assets/record.sh rebuilds the gif (asciinema +
+termtosvg + headless chrome + ffmpeg).
