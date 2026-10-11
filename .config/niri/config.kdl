@@ -63,6 +63,12 @@ window-rule {
     draw-border-with-background false
 }
 
+// Minecraft: no transparency (particles are hard to read through it), rounding stays from the global rule
+window-rule {
+    match app-id="(?i)minecraft"
+    opacity 1.0
+}
+
 
 // keyboard (Mod = Super)
 binds {
