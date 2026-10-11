@@ -2,16 +2,19 @@
     border: none;
     border-radius: 0;
     font-family: "JetBrains Mono", "JetBrainsMono Nerd Font", monospace;
-    font-weight: bold;
-    font-size: 13px;
+    font-weight: 500;
+    font-size: 14px;
     min-height: 0;
 }
 
+/* Единая непрозрачная панель */
 window#waybar {
-    background-color: transparent;
+    background-color: rgba(20, 27, 24, 0.98);
+    border: 1px solid rgba(166, 227, 161, 0.08);
+    border-radius: 10px;
 }
 
-/* shared style for every pill block (dark forest background) */
+/* Все модули — прозрачные блоки внутри панели */
 #workspaces,
 #language,
 #custom-weather,
@@ -22,39 +25,41 @@ window#waybar {
 #pulseaudio,
 #battery,
 #custom-power,
+#custom-pong,
+#custom-sysmon,
 #custom-powermode,
 #custom-lid,
-#mpris {
-    background-color: rgba(19, 26, 22, 0.85);
-    padding: 3px 12px;
-    margin: 2px 3px;
-    border-radius: 10px;
-    border: 1px solid rgba(166, 227, 161, 0.12);
+#custom-music,
+#custom-music-toggle {
+    background-color: transparent;
+    padding: 0 10px;
+    margin: 0;
+    color: #cddbd0;
 }
 
-/* workspaces */
+/* Воркспейсы */
 #workspaces {
-    padding: 0 4px;
+    padding: 0 6px;
 }
 
 #workspaces button {
     padding: 0 8px;
     color: #64766a;
     background: transparent;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: 10px;
+    transition: all 0.15s ease;
 }
 
 #workspaces button:hover {
     color: #cddbd0;
-    background: rgba(166, 227, 161, 0.08);
+    background: rgba(166, 227, 161, 0.10);
 }
 
 #workspaces button.active,
 #workspaces button.focused {
     color: #131a16;
     background: #a6e3a1;
-    border-radius: 8px;
+    font-weight: 700;
 }
 
 #workspaces button.urgent {
@@ -62,60 +67,122 @@ window#waybar {
     background: #e3c078;
 }
 
-/* module color accents: green / teal / amber */
-#language {
-    color: #59c2a5;
+/* Пустые воркспейсы скрываем (кроме текущего/активного) */
+#workspaces button.empty:not(.focused):not(.active) {
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    font-size: 0;
 }
 
-#custom-weather {
+/* Акцент 1 — зелёный: «жизнь системы» */
+#temperature {
+    color: #a6e3a1;
+}
+
+#battery {
+    color: #a6e3a1;
+    margin-right: 8px;
+}
+
+#pulseaudio {
+    color: #a6e3a1;
+}
+
+#custom-powermode.power-saver {
+    color: #a6e3a1;
+}
+
+#custom-lid.lid-sleep {
+    color: #a6e3a1;
+}
+
+#custom-music {
+    color: #a6e3a1;
+}
+
+#custom-pong {
+    color: #a6e3a1;
+    padding: 0 6px;
+}
+
+#custom-sysmon {
+    color: #a6e3a1;
+    padding: 0 6px;
+}
+
+/* Акцент 2 — янтарный: «информация/сеть» */
+#clock {
+    color: #e3c078;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 12px;
+    border: 1px solid rgba(227, 192, 120, 0.45);
+    border-radius: 8px;
+    background: rgba(227, 192, 120, 0.08);
+}
+
+#language {
     color: #e3c078;
 }
 
-#clock {
-    color: #cddbd0;
-    background-color: rgba(26, 35, 30, 0.95);
-    border: 1px solid rgba(227, 192, 120, 0.45);
-}
-
-#network.speed {
-    color: #93a598;
+#network.wifi {
+    color: #e3c078;
 }
 
 #cpu {
     color: #e3c078;
 }
 
-#temperature {
-    color: #a6e3a1;
+#battery.charging {
+    color: #e3c078;
 }
 
-#temperature.critical {
-    color: #c9745c;
-    background-color: rgba(201, 116, 92, 0.15);
+#custom-powermode.balanced {
+    color: #e3c078;
 }
 
-#network.wifi {
-    color: #59c2a5;
+#custom-music-toggle {
+    color: #e3c078;
 }
 
-#pulseaudio {
-    color: #8fbf87;
-}
-
+/* Приглушённые состояния */
 #pulseaudio.muted {
     color: #64766a;
 }
 
-#mpris {
-    color: #cddbd0;
+#custom-music.paused {
+    color: #64766a;
+    font-style: italic;
 }
 
-#battery {
-    color: #a6e3a1;
+#custom-music.disconnected {
+    color: #64766a;
 }
 
-#battery.charging {
-    color: #59c2a5;
+#custom-lid.lid-nosleep {
+    color: #64766a;
+}
+
+#custom-power {
+    color: #c9745c;
+    background: rgba(201, 116, 92, 0.16);
+    border: 1px solid rgba(201, 116, 92, 0.5);
+    border-radius: 8px;
+    font-size: 18px;
+    padding: 0 13px;
+}
+
+#custom-power:hover {
+    color: #c9745c;
+    background: rgba(201, 116, 92, 0.30);
+}
+
+/* Статусные (сигнальные) цвета — только для тревожных состояний */
+#temperature.critical {
+    color: #c9745c;
 }
 
 #battery.warning:not(.charging) {
@@ -138,32 +205,6 @@ window#waybar {
     }
 }
 
-/* high performance mode: terracotta */
 #custom-powermode.performance {
     color: #c9745c;
-    border-color: rgba(201, 116, 92, 0.4);
-}
-
-/* power saver mode: soft green */
-#custom-powermode.power-saver {
-    color: #a6e3a1;
-    border-color: rgba(166, 227, 161, 0.4);
-}
-
-/* balanced mode (if it ever kicks in): teal */
-#custom-powermode.balanced {
-    color: #59c2a5;
-    border-color: rgba(89, 194, 165, 0.4);
-}
-
-/* lid: sleep on close enabled: soft green */
-#custom-lid.lid-sleep {
-    color: #a6e3a1;
-    border-color: rgba(166, 227, 161, 0.4);
-}
-
-/* lid: sleep on close disabled: muted gray */
-#custom-lid.lid-nosleep {
-    color: #64766a;
-    border-color: rgba(166, 227, 161, 0.12);
 }

@@ -1,27 +1,32 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 32,
-    "margin-top": 6,
-    "margin-left": 10,
-    "margin-right": 10,
-    "spacing": 6,
+    "height": 40,
+    "margin-top": 12,
+    "margin-left": 12,
+    "margin-right": 12,
+    "spacing": 10,
+    "expand-center": true,
+    "fixed-center": false,
 
     "modules-left": [
         "custom/power",
         "niri/workspaces",
         "custom/powermode",
         "custom/lid",
-        "mpris"
-    ],
-    "modules-center": [
+        "custom/music",
+        "custom/music-toggle",
         "clock"
     ],
+    "modules-center": [
+        "custom/pong",
+        "custom/sysmon"
+    ],
     "modules-right": [
-        "network#speed",
         "network#wifi",
         "pulseaudio",
         "niri/language",
+        "temperature",
         "battery"
     ],
 
@@ -36,23 +41,10 @@
         "format-ru": "RU"
     },
 
-    "custom/weather": {
-        "format": "{}",
-        "tooltip": true,
-        "interval": 1800,
-        "exec": "curl -s 'https://wttr.in/?format=1' || echo '🌤️ N/A'"
-    },
-
     "clock": {
         "interval": 1,
-        "format": " {:%H:%M:%S  󰸗 %d.%m.%Y}",
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-    },
-
-    "network#speed": {
-        "interval": 1,
-        "format": " {bandwidthDownBytes}  {bandwidthUpBytes}",
-        "tooltip-format": "interface: {ifname}\nIP: {ipaddr}"
+        "format": " {:%H:%M}",
+        "tooltip-format": "<big>{0:%A, %d.%m.%Y}</big>\n<big>{0:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
     "cpu": {
@@ -61,6 +53,7 @@
     },
 
     "temperature": {
+        "thermal-zone": 13,
         "critical-threshold": 80,
         "format": " {temperatureC}°C",
         "format-critical": " {temperatureC}°C"
@@ -72,11 +65,11 @@
         "format-linked": "󰈀 {ifname} (No IP)",
         "format-disconnected": "󰤭 Offline",
         "tooltip-format": "{ifname} via {gwaddr} 󰊗",
-        "on-click": "kitty -e nmtui"
+        "on-click": "/home/anaidyss/.local/bin/wifi-menu"
     },
 
     "pulseaudio": {
-        "format": "{icon} {volume}%",
+        "format": "{icon} {volume}",
         "format-muted": "󰝟 Muted",
         "format-icons": {
             "headphone": "",
@@ -88,12 +81,22 @@
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
     },
 
-    "mpris": {
-        "format": "{player_icon} {title} - {artist}",
-        "format-paused": "{status_icon} <i>{title}</i>",
-        "player-icons": { "default": "⏸" },
-        "status-icons": { "paused": "▶" },
-        "max-length": 30
+    "custom/music": {
+        "exec": "/home/anaidyss/.config/waybar/music.sh",
+        "return-type": "json",
+        "interval": 1,
+        "on-click": "playerctl play-pause",
+        "on-click-middle": "playerctl previous",
+        "on-click-right": "kitty --class veil-music --detach -e veil-music",
+        "on-scroll-up": "playerctl previous",
+        "on-scroll-down": "playerctl next"
+    },
+
+    "custom/music-toggle": {
+        "exec": "/home/anaidyss/.config/waybar/music-toggle.sh",
+        "return-type": "json",
+        "interval": 2,
+        "on-click": "/home/anaidyss/.local/bin/veil-music bar-toggle"
     },
 
     "custom/powermode": {
@@ -102,7 +105,7 @@
         "interval": 1,
         "format": "{}",
         "on-click": "/home/anaidyss/.config/waybar/toggle_pm.sh",
-        "tooltip": false
+        "tooltip": true
     },
     
     "custom/lid": {
@@ -111,14 +114,30 @@
         "interval": 1,
         "format": "{}",
         "on-click": "/home/anaidyss/.config/waybar/toggle_lid.sh",
-        "tooltip": false
+        "tooltip": true
     },
 
     "custom/power": {
-        "format": "",
-        "tooltip": "LMB: V.E.I.L. · RMB: Forest (hyprlock)",
+        "format": "⏻",
+        "tooltip": "ЛКМ: V.E.I.L. · ПКМ: Forest (hyprlock)",
         "on-click": "/home/anaidyss/.local/bin/veil-lock",
         "on-click-right": "/home/anaidyss/.config/niri/lock.sh"
+    },
+    "custom/pong": {
+        "exec": "/home/anaidyss/.config/waybar/pong.sh 70",
+        "return-type": "json",
+        "escape": false,
+        "expand": true,
+        "tooltip": false,
+        "on-click": "/home/anaidyss/.config/waybar/center-toggle.sh"
+    },
+    "custom/sysmon": {
+        "exec": "/home/anaidyss/.config/waybar/sysmon.sh",
+        "return-type": "json",
+        "escape": false,
+        "expand": true,
+        "tooltip": true,
+        "on-click": "/home/anaidyss/.config/waybar/center-toggle.sh"
     },
     "battery": {
         "interval": 15,
@@ -126,9 +145,9 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "{icon} {capacity}%",
-        "format-charging": "󰂄 {capacity}%",
-        "format-plugged": " {capacity}%",
+        "format": "{icon} {capacity}",
+        "format-charging": "󰂄 {capacity}",
+        "format-plugged": " {capacity}",
         "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"]
     }
 }
