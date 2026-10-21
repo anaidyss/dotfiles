@@ -1,0 +1,592 @@
+# System palettes. Each role: [forest, graphite].
+# Only the right column (graphite) should be edited, and new roles can be added;
+# colors must be unique within a theme (otherwise switching is not reversible).
+# After editing:  theme audit  (coverage check)  then  theme graphite  (apply).
+
+themes = ["forest", "graphite"]
+
+[roles]
+# --- backgrounds: darkest to lightest ---
+black        = ["#000000", "#000000"]
+bg_abyss     = ["#0a0e0b", "#131412"]
+bg_player    = ["#0d120f", "#171816"]
+bg_deep      = ["#0f1512", "#1a1b19"]
+bg_side      = ["#101612", "#1c1d1b"]
+bg           = ["#131a16", "#1e1f1c"]
+bg_panel     = ["#141b18", "#222320"]
+bg_soft      = ["#17201b", "#262725"]
+bg_alt       = ["#1a231e", "#2a2a28"]
+bg_card      = ["#1d2721", "#2e2e2c"]
+bg_sel       = ["#223029", "#30302e"]
+bg_sel2      = ["#24342c", "#353533"]
+border       = ["#2c3f34", "#3c3c3a"]
+grey_1       = ["#38423c", "#42423f"]
+grey_2       = ["#3a4f42", "#484845"]
+grey_3       = ["#46514b", "#4e4e4b"]
+grey_4       = ["#4a584f", "#52524f"]
+grey_5       = ["#4a5f52", "#565653"]
+grey_6       = ["#4d5a53", "#595956"]
+muted        = ["#4f6157", "#5c5c58"]
+grey_7       = ["#5f716a", "#6a6a66"]
+dim          = ["#64766a", "#73736f"]
+grey_8       = ["#7a8c7f", "#85857f"]
+subtext      = ["#93a598", "#9a9a98"]
+fg_3         = ["#b3c2b5", "#b5b5b2"]
+fg_2         = ["#b9c7bb", "#c8c8c6"]
+fg_1         = ["#cdd8d0", "#d0d0ce"]
+fg           = ["#cddbd0", "#d5d5d3"]
+fg_0         = ["#d7e3d9", "#dcdcda"]
+fg_bright    = ["#e0ece2", "#eaeae8"]
+fg_white     = ["#eaf3ea", "#f3f3f1"]
+osd_bg       = ["#1e1e2e", "#1f201d"]
+osd_border   = ["#313244", "#3d3d3b"]
+osd_fg       = ["#cdd6f4", "#d6d6d4"]
+slurp_bg     = ["#11111b", "#181917"]
+bg_music_1   = ["#1b2620", "#282826"]
+bg_music_2   = ["#24332a", "#323230"]
+border_music = ["#2e3d33", "#3a3a38"]
+
+# --- main accent: green -> clay orange ---
+accent       = ["#a6e3a1", "#d87756"]
+accent_hi    = ["#b8f5a6", "#f0a58a"]
+accent_2     = ["#c8eac2", "#f4b8a0"]
+accent_3     = ["#b8dcb2", "#ecae92"]
+accent_4     = ["#aad3a4", "#e89273"]
+
+# --- gold (info / ANSI yellow) ---
+gold         = ["#e3c078", "#e8c987"]
+yellow       = ["#d9b36a", "#d9b36a"]
+yellow_n     = ["#cfa95f", "#d4a24c"]
+orange_hi    = ["#dca26a", "#e8a050"]
+orange       = ["#c68a52", "#d08a40"]
+yellow_dim   = ["#8a713c", "#8a6a2c"]
+orange_dim   = ["#855a35", "#8a5424"]
+amber_dark   = ["#3f4a2c", "#4a4026"]
+gold_menu    = ["#bfa05f", "#c99a45"]
+gold_menu_hi = ["#f0d08a", "#f5d98f"]
+gold_warm    = ["#e0b368", "#e8b95f"]
+
+# --- red (terracotta -> red) ---
+red          = ["#c9745c", "#e5534b"]
+red_hi       = ["#d99a82", "#f07a72"]
+red_tint_1   = ["#e8b7a2", "#f4aaa4"]
+red_tint_2   = ["#dfa892", "#f2928b"]
+red_dim      = ["#8a4f3d", "#8a3a36"]
+red_soft     = ["#e08585", "#ee8880"]
+red_bg_1     = ["#4d2f25", "#4d2626"]
+red_bg_2     = ["#4a2b22", "#4a2423"]
+red_bg_3     = ["#42271f", "#421f1f"]
+alert        = ["#ff6b57", "#ff5a50"]
+alert_2      = ["#f0775c", "#f26a5f"]
+alert_3      = ["#ff8a6b", "#ff7f76"]
+
+# --- teal: main secondary accent -> amber; conifer/ANSI blue -> light blue (where appropriate) ---
+teal           = ["#59c2a5", "#e8a838"]
+blue_hi      = ["#6fd0b3", "#8eeaea"]
+cyan         = ["#4aa892", "#6fcfcf"]
+steel        = ["#5f9790", "#6f98cc"]
+steel_hi     = ["#7fb8ad", "#9cc0ef"]
+blue_tint_1  = ["#99d0c0", "#a8c8ee"]
+blue_tint_2  = ["#a8dccc", "#c0daf4"]
+blue_tint_3  = ["#bce8da", "#d2e6f8"]
+blue_bg_1    = ["#1d4038", "#1d3550"]
+blue_bg_2    = ["#20483e", "#203d5c"]
+blue_bg_3    = ["#244d43", "#24456b"]
+blue_dim_1   = ["#33705f", "#3a6a9e"]
+blue_dim_2   = ["#3f6a64", "#4a78a8"]
+blue_trail   = ["#3f5a50", "#3d5a78"]
+nord_blue    = ["#8ab6d6", "#7fb0e8"]
+nord_blue_hi = ["#9cc4e0", "#a0c8f2"]
+nord_blue_lo = ["#6f93b8", "#5f8fc0"]
+blue_sel     = ["#1e2a33", "#2c3340"]
+
+# --- former green (git/diff/ok): slate blue in graphite, no green at all ---
+# to bring sage back: change the right column of this block to #8aae78 / #9cbd8c / #a9c08e / #5a8560 etc.
+green        = ["#7cb87a", "#78b4c0"]
+green_hi     = ["#8fbf87", "#94c8d0"]
+green_nord   = ["#a3be8c", "#8ab9c4"]
+green_bg_1   = ["#2a4a2c", "#25454d"]
+green_bg_2   = ["#2d4f2f", "#2a4f58"]
+green_bg_3   = ["#264228", "#23404a"]
+green_dim    = ["#4e7a4f", "#4f8590"]
+grad_1       = ["#97dca2", "#db8150"]
+grad_2       = ["#87d6a3", "#de8b4a"]
+grad_3       = ["#78cfa3", "#e29444"]
+grad_4       = ["#68c9a4", "#e59e3e"]
+
+# --- misc (workspaces binary, pm.fish) ---
+ws_green     = ["#98c379", "#8cbcc6"]
+ws_cyan      = ["#56b6c2", "#5fb0d8"]
+ws_amber     = ["#f5a623", "#e9a23b"]
+ws_grey_1    = ["#888888", "#8a8a86"]
+ws_grey_2    = ["#999999", "#9b9b97"]
+cat_blue     = ["#89b4fa", "#8fb4e8"]
+cat_red      = ["#f38ba8", "#f08a8f"]
+
+# --- purple -> cool lavender ---
+purple       = ["#a48bb5", "#b79bd6"]
+purple_hi    = ["#c2a8cf", "#d3bcee"]
+purple_dim   = ["#6d5a7a", "#6f5f8f"]
+purple_nord  = ["#b48ead", "#c4a8e0"]
+
+[targets]
+# Files where colors are replaced in place (formats #rrggbb, #rrggbbaa, rgb(), rgba(r,g,b,..))
+files = [
+  "kitty/current-theme.conf", "niri/config.kdl", "mako/config",
+  "waybar/*.sh",
+  "gtk-3.0/gtk.css", "gtk-4.0/gtk.css", "swayosd/style.css", "hypr/hyprlock.conf",
+  "yazi/theme.toml", "qutebrowser/config.py",
+  "bluetuith/bluetuith.conf", "nvim/lua/plugins/*.lua",
+  "~/.local/bin/screenshot-area.sh", "~/.local/bin/lock-battery.sh", "~/.local/bin/lock-music.sh",
+  "~/.local/bin/bluetooth-menu", "~/.local/bin/wifi-menu", "~/.local/bin/goauth",
+  "~/.local/bin/ipflag", "~/.config/mozilla/firefox/fe130wc2.default-release/user.js",
+  "~/.local/share/veil-music/veil_music/*.py",
+  "~/.local/share/veil-music/veil_music/*.tcss",
+]
+# Files with values like  key = rrggbb[aa]  (no #)
+bare_files = ["fuzzel/*.ini", "spicetify/Themes/System/color.ini", "MangoHud/*.conf", "mangohud/*.conf"]
+# fish keeps colors in universal variables (only fish_color_* / fish_pager_color_* lines)
+fish_files = ["fish/fish_variables"]
+# files where a color is a standalone 6-hex word (set_color a6e3a1, set -l x ..., -c a6e3a1)
+token_files = ["fish/config.fish", "fish/functions/pm.fish"]
+# binaries containing #rrggbb strings (patched in place, length unchanged)
+binary_files = ["waybar/niri-workspaces"]
+
+# Themes named in the file name: the forest file is canonical, the graphite file is generated from it
+[[targets.variants]]
+src = "btop/themes/forest.theme"
+dst = "btop/themes/{theme}.theme"
+
+[[targets.variants]]
+src = "bat/themes/Forest.tmTheme"
+dst = "bat/themes/{Theme}.tmTheme"
+
+# Which theme is selected in the program config
+[[targets.selectors]]
+file = "btop/btop.conf"
+pattern = '^(color_theme\s*=\s*")([^"]*)(")'
+value = "{theme}"
+
+[[targets.selectors]]
+file = "bat/config"
+pattern = '^(--theme=")([^"]*)(")'
+value = "{Theme}"
+
+# Wallpaper: wallpaper.jpg -> original (forest) or a tinted copy (cache); swaybg is restarted.
+# Wallpapers are changed with the wp command (it calls theme wallpaper).
+[wallpaper]
+link = "Pictures/Wallpapers/wallpaper.jpg"
+cache = "Pictures/Wallpapers/.tinted"
+
+[wallpaper.graphite]
+stops = ["#10110f", "#252621", "#4f4e45", "#9a947f"]
+level = "0%,72%"
+gamma = 1.0
+
+# GNOME/libadwaita accent color and GNOME desktop background
+[[gsettings]]
+schema = "org.gnome.desktop.interface"
+key = "accent-color"
+forest = "green"
+graphite = "orange"
+
+[[gsettings]]
+schema = "org.gnome.desktop.background"
+key = "primary-color"
+forest = "#2c3a2e"
+graphite = "#2a2a28"
+
+# Style (not colors): window opacity. Graphite uses opaque windows, like Claude Code
+[[targets.settings]]
+file = "kitty/kitty.conf"
+pattern = '^(background_opacity )([0-9.]+)()$'
+forest = "0.85"
+graphite = "1.0"
+
+[[targets.settings]]
+file = "niri/config.kdl"
+pattern = '(geometry-corner-radius \d+\n\s*clip-to-geometry true\n\s*opacity )([0-9.]+)()'
+forest = "0.90"
+graphite = "1.0"
+
+# ===== Graphite: a monolith in the Veil style =====
+
+# Slots: each theme has its own full file (the structure differs, not just the colors).
+# Edits to the live file are saved back to the previous theme's slot when switching.
+[[targets.swaps]]
+live = "waybar/style.css"
+forest = "theme/slots/forest/waybar-style.css"
+graphite = "theme/slots/graphite/waybar-style.css"
+
+[[targets.swaps]]
+live = "starship.toml"
+forest = "theme/slots/forest/starship.toml"
+graphite = "theme/slots/graphite/starship.toml"
+
+[[targets.swaps]]
+live = "fastfetch/config.jsonc"
+forest = "theme/slots/forest/fastfetch.jsonc"
+graphite = "theme/slots/graphite/fastfetch.jsonc"
+
+[[targets.swaps]]
+live = "fish/functions/fish_greeting.fish"
+forest = "theme/slots/forest/fish_greeting.fish"
+graphite = "theme/slots/graphite/fish_greeting.fish"
+
+# yazi: icons keep amber/red/light blue, the rest is grey
+[[targets.filemaps]]
+file = "yazi/theme.toml"
+theme = "graphite"
+from = '^\[icon\]'
+map = { "#6f98cc" = "#8b8b87", "#f07a72" = "#da7a5c", "#d3bcee" = "#93938f", "#78b4c0" = "#9b9b93", "#b79bd6" = "#9d9d95" }
+
+# yazi: per-file-type colors -> grey (folders, exec, links, errors stay colored)
+[[targets.filemaps]]
+file = "yazi/theme.toml"
+theme = "graphite"
+from = '^\[filetype\]'
+to = '^\[icon\]'
+map = { "#d3bcee" = "#7099cd", "#b79bd6" = "#6c95c9", "#8eeaea" = "#bbbbb7", "#94c8d0" = "#bdbdb9" }
+
+# yazi: XDG folders like regular folders (accent)
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '(Library,Development\}/", fg = ")(#[0-9a-fA-F]{6})(")'
+forest = "#e3c078"
+graphite = "#d87756"
+
+# btop: box borders in a single grey
+[[targets.settings]]
+file = "btop/themes/graphite.theme"
+pattern = '(theme\[cpu_box\]=")(#[0-9a-fA-F]{6})(")'
+forest = "#59c2a5"
+graphite = "#5c5c58"
+
+[[targets.settings]]
+file = "btop/themes/graphite.theme"
+pattern = '(theme\[mem_box\]=")(#[0-9a-fA-F]{6})(")'
+forest = "#a6e3a1"
+graphite = "#5c5c58"
+
+[[targets.settings]]
+file = "btop/themes/graphite.theme"
+pattern = '(theme\[net_box\]=")(#[0-9a-fA-F]{6})(")'
+forest = "#e3c078"
+graphite = "#5c5c58"
+
+# yazi: folder names in bold amber; the selected row in clay
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '(\{ url = "\*/", fg = ")(#[0-9a-fA-F]{6})(")'
+forest = "#a6e3a1"
+graphite = "#e8c987"
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '(\{ mime = "inode/directory", fg = ")(#[0-9a-fA-F]{6})(")'
+forest = "#a6e3a1"
+graphite = "#e8c987"
+
+# --- shape: square corners, thin borders, dense grid ---
+[[targets.settings]]
+file = "niri/config.kdl"
+pattern = '''(window-rule \{\n    geometry-corner-radius )(\d+)(\n    clip-to-geometry true)'''
+forest = '''12'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "niri/config.kdl"
+pattern = '''(border \{\n        width )(\d+)(\n)'''
+forest = '''2'''
+graphite = '''1'''
+
+[[targets.settings]]
+file = "niri/config.kdl"
+pattern = '''(inactive-color ")(transparent|#[0-9a-fA-F]{6})(")'''
+forest = '''transparent'''
+graphite = '''#3c3c3a'''
+
+[[targets.settings]]
+file = "niri/config.kdl"
+pattern = '''(\n    gaps )(\d+)(\n)'''
+forest = '''12'''
+graphite = '''6'''
+
+[[targets.settings]]
+file = "waybar/config.jsonc"
+pattern = '''("margin-top": )(\d+)(,)'''
+forest = '''12'''
+graphite = '''6'''
+
+[[targets.settings]]
+file = "waybar/config.jsonc"
+pattern = '''("margin-left": )(\d+)(,)'''
+forest = '''12'''
+graphite = '''6'''
+
+[[targets.settings]]
+file = "waybar/config.jsonc"
+pattern = '''("margin-right": )(\d+)(,)'''
+forest = '''12'''
+graphite = '''6'''
+
+[[targets.settings]]
+file = "waybar/config.jsonc"
+pattern = '''("spacing": )(\d+)(,)'''
+forest = '''10'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "waybar/config.jsonc"
+pattern = '''("clock": \{\n        "interval": 1,\n        "format": ")([^"\n]*)(")'''
+forest = ''' {:%H:%M}'''
+graphite = '''[ {:%H:%M} ]'''
+
+[[targets.settings]]
+file = "fuzzel/fuzzel.ini"
+pattern = '''^(radius=)(\d+)()$'''
+forest = '''12'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "fuzzel/fuzzel.ini"
+pattern = '''(\[border\]\nwidth=)(\d+)()'''
+forest = '''2'''
+graphite = '''1'''
+
+[[targets.settings]]
+file = "fuzzel/fuzzel.ini"
+pattern = '''^(prompt=")([^"\n]*)(")'''
+forest = '''❯ '''
+graphite = '''[ RUN ] '''
+
+[[targets.settings]]
+file = "fuzzel/wifi.ini"
+pattern = '''^(radius=)(\d+)()$'''
+forest = '''14'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "fuzzel/wifi.ini"
+pattern = '''^(selection-radius=)(\d+)()$'''
+forest = '''8'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "fuzzel/wifi.ini"
+pattern = '''(\[border\]\nwidth=)(\d+)()'''
+forest = '''2'''
+graphite = '''1'''
+
+[[targets.settings]]
+file = "fuzzel/wifi.ini"
+pattern = '''(\[main\]\n[^\[]*?\nprompt=)([^\n]*)()'''
+forest = '''󰖩  '''
+graphite = '''[ WIFI ] '''
+
+[[targets.settings]]
+file = "mako/config"
+pattern = '''^(border-radius=)(\d+)()$'''
+forest = '''8'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "mako/config"
+pattern = '''^(border-size=)(\d+)()$'''
+forest = '''2'''
+graphite = '''1'''
+
+[[targets.settings]]
+file = "swayosd/style.css"
+pattern = '''(background-color: rgba\([^)]*\);\n    border-radius: )(\d+)(px;)'''
+forest = '''12'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "swayosd/style.css"
+pattern = '''(progressbar trough \{\n    background: #[0-9a-fA-F]{6};\n    border-radius: )(\d+)(px;)'''
+forest = '''6'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "swayosd/style.css"
+pattern = '''(progressbar progress \{\n    background: #[0-9a-fA-F]{6};\n    border-radius: )(\d+)(px;)'''
+forest = '''6'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "hypr/hyprlock.conf"
+pattern = '''(image \{[^}]*?rounding = )(-?\d+)(\n)'''
+forest = '''-1'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "hypr/hyprlock.conf"
+pattern = '''(input-field \{[^}]*?rounding = )(-?\d+)(\n)'''
+forest = '''8'''
+graphite = '''0'''
+
+[[targets.settings]]
+file = "btop/btop.conf"
+pattern = '''^(rounded_corners = )(true|false)()$'''
+forest = '''true'''
+graphite = '''false'''
+
+
+# mako: [ APP ] title and spacing on the menu grid
+[[targets.settings]]
+file = "mako/config"
+pattern = '''^(format=)([^\n]*)()$'''
+forest = '''<b>%s</b>\n%b'''
+graphite = '''<b>[ %a ]</b>  %s\n%b'''
+
+[[targets.settings]]
+file = "mako/config"
+pattern = '''^(margin=)(\d+)()$'''
+forest = "20"
+graphite = "6"
+
+[[targets.settings]]
+file = "mako/config"
+pattern = '''^(padding=)(\d+)()$'''
+forest = "15"
+graphite = "12"
+
+# peaclock: each theme has its own config
+[[targets.swaps]]
+live = "~/.peaclock/config"
+forest = "theme/slots/forest/peaclock"
+graphite = "theme/slots/graphite/peaclock"
+
+# pipes: ANSI colors — clay (10), amber (3), grey (8) instead of green/teal
+[[targets.settings]]
+file = "fish/config.fish"
+pattern = '''(alias pipes="pipes\.sh -t 0 -p 3 -R )((?:-c \d+ )+-c \d+)( -f 60")'''
+forest = "-c 2 -c 6 -c 10"
+graphite = "-c 10 -c 3 -c 8"
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''^(sep_left\s*=\s*)(\{[^\n]*\})()$'''
+forest = "{ open = \"\ue0b6\", close = \"\ue0b4\" }"
+graphite = "{ open = \"\", close = \"\" }"
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''^(sep_right\s*=\s*)(\{[^\n]*\})()$'''
+forest = "{ open = \"\ue0b6\", close = \"\ue0b4\" }"
+graphite = "{ open = \"\", close = \"\" }"
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''^(sep_inner\s*=\s*)(\{[^\n]*\})()$'''
+forest = "{ open = \"\ue0b6\", close = \"\ue0b4\" }"
+graphite = "{ open = \"\", close = \"\" }"
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''^(sep_outer\s*=\s*)(\{[^\n]*\})()$'''
+forest = "{ open = \"\ue0b6\", close = \"\ue0b4\" }"
+graphite = "{ open = \"\", close = \"\" }"
+
+# Dolphin/KDE apps: color scheme from the palette (kdeglobals)
+[[targets.swaps]]
+live = "kdeglobals"
+forest = "theme/slots/forest/kdeglobals"
+graphite = "theme/slots/graphite/kdeglobals"
+
+# yazi: the selected row is a clay bar with dark text (per section: sections have different original values)
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''(\[tasks\]\n(?:[^\[]*?)^hovered\s*=\s*)(\{[^\n]*\})()'''
+forest = '''{ fg = "#c2a8cf", bold = true }'''
+graphite = '''{ fg = "#1e1f1c", bg = "#d87756", bold = true }'''
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''(\[help\]\n(?:[^\[]*?)^hovered\s*=\s*)(\{[^\n]*\})()'''
+forest = '''{ reversed = true, bold = true }'''
+graphite = '''{ fg = "#1e1f1c", bg = "#d87756", bold = true }'''
+
+
+# yazi: leftover light blue/teal (symlinks, markers, hints) -> amber
+[[targets.filemaps]]
+file = "yazi/theme.toml"
+theme = "graphite"
+to = '''^\[icon\]'''
+map = { "#9cc0ef" = "#dab46b", "#8eeaea" = "#e9ca88" }
+
+# yazi: current-row highlight is a rectangular clay bar ([indicator]); grey in the left column
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''(\[indicator\]\n(?:[^\[]*?)^current\s*=\s*)(\{[^\n]*\})()'''
+forest = "{ reversed = true }"
+graphite = "{ fg = \"#1e1f1c\", bg = \"#d87756\", bold = true }"
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''(\[indicator\]\n(?:[^\[]*?)^parent\s*=\s*)(\{[^\n]*\})()'''
+forest = "{ reversed = true }"
+graphite = "{ fg = \"#d5d5d3\", bg = \"#3c3c3a\", bold = true }"
+
+[[targets.settings]]
+file = "yazi/theme.toml"
+pattern = '''(\[indicator\]\n(?:[^\[]*?)^padding\s*=\s*)(\{[^\n]*\})()'''
+forest = "{ open = \"\ue0b6\", close = \"\ue0b4\" }"
+graphite = "{ open = \"\", close = \"\" }"
+
+[[targets.swaps]]
+live = "gtk-4.0/veil.css"
+forest = "theme/slots/forest/veil-gtk.css"
+graphite = "theme/slots/graphite/veil-gtk.css"
+
+[[targets.swaps]]
+live = "gtk-3.0/veil.css"
+forest = "theme/slots/forest/veil-gtk.css"
+graphite = "theme/slots/graphite/veil-gtk.css"
+
+# GTK apps (Nautilus etc.): grey Veil folder icons and no window buttons (close with Mod+Q)
+[[gsettings]]
+schema = "org.gnome.desktop.interface"
+key = "icon-theme"
+forest = "Papirus-Dark"
+graphite = "Veil"
+
+[[gsettings]]
+schema = "org.gnome.desktop.wm.preferences"
+key = "button-layout"
+forest = "appmenu:close"
+graphite = ":"
+
+[[targets.swaps]]
+live = "~/.config/mozilla/firefox/fe130wc2.default-release/chrome/userChrome.css"
+forest = "theme/slots/forest/ff-userChrome.css"
+graphite = "theme/slots/graphite/ff-userChrome.css"
+
+[[targets.swaps]]
+live = "~/.config/mozilla/firefox/fe130wc2.default-release/chrome/userContent.css"
+forest = "theme/slots/forest/ff-userContent.css"
+graphite = "theme/slots/graphite/ff-userContent.css"
+
+# ===== Shape tokens for veilkit (menus/popups). Colors come from the roles above =====
+[tokens.forest]
+radius = 12
+border = 1
+pad = 14
+gap = 8
+control_h = 30
+font = "JetBrainsMono Nerd Font"
+font_size = 11
+margin = 12
+bar_offset = 50
+
+[tokens.graphite]
+radius = 0
+border = 1
+pad = 14
+gap = 6
+control_h = 28
+font = "JetBrainsMono Nerd Font"
+font_size = 11
+margin = 6
+bar_offset = 46

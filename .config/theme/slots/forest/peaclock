@@ -1,0 +1,17 @@
+# Forest palette: green blocks, teal colons, amber date
+# Note: blocks are drawn with the background style (fill is empty), so the main keys are *-bg
+style active-bg #a6e3a1
+style inactive-bg #223029
+style colon-bg #59c2a5
+
+# fg — in case fill gets enabled
+style active-fg #a6e3a1
+style inactive-fg #223029
+style colon-fg #59c2a5
+
+style date #e3c078
+
+# peaclock command line — same palette
+style prompt #59c2a5
+style success #a6e3a1
+style error #c9745c

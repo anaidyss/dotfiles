@@ -1,0 +1,180 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrains Mono", "JetBrainsMono Nerd Font", monospace;
+    font-weight: 500;
+    font-size: 14px;
+    min-height: 0;
+}
+
+/* Single opaque bar */
+window#waybar {
+    background-color: #1e1f1c;
+    border: 1px solid #5c5c58;
+    border-radius: 0;
+}
+
+/* All modules — transparent blocks inside the bar */
+#custom-workspaces,
+#language,
+#custom-weather,
+#clock,
+#network,
+#cpu,
+#temperature,
+#pulseaudio,
+#battery,
+#custom-power,
+#custom-center,
+#custom-powermode,
+#custom-lid,
+#custom-music,
+#custom-music-toggle,
+#custom-wifi,
+#custom-bluetooth {
+    background-color: transparent;
+    padding: 0 10px;
+    margin: 0;
+    color: #d5d5d3;
+    border-left: 1px solid #3c3c3a;
+}
+
+/* Workspaces (custom niri-workspaces-rs module) */
+#custom-workspaces {
+    padding: 0 6px;
+    background: transparent;
+    border: 1px solid #5c5c58;
+    border-radius: 0;
+}
+
+/* Accent 1 — green: "system life" */
+#temperature {
+    color: #b5b5b2;
+}
+
+#battery {
+    color: #b5b5b2;
+    margin-right: 8px;
+}
+
+#pulseaudio {
+    color: #b5b5b2;
+}
+
+#custom-powermode.power-saver {
+    color: #b5b5b2;
+}
+
+#custom-lid.lid-sleep {
+    color: #b5b5b2;
+}
+
+#custom-music {
+    color: #b5b5b2;
+}
+
+#custom-center {
+    color: #b5b5b2;
+    padding: 0 6px;
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Symbols 2", monospace;
+}
+
+/* Accent 2 — amber: "info/network" */
+#clock {
+    color: #1e1f1c;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 0;
+    background: #d9b36a;
+}
+
+#language {
+    color: #b5b5b2;
+}
+
+#custom-wifi {
+    color: #b5b5b2;
+}
+
+#custom-bluetooth {
+    color: #7fb0e8;
+}
+
+#cpu {
+    color: #b5b5b2;
+}
+
+#battery.charging {
+    color: #b5b5b2;
+}
+
+#custom-powermode.balanced {
+    color: #b5b5b2;
+}
+
+#custom-music-toggle {
+    color: #b5b5b2;
+}
+
+/* Muted states */
+#pulseaudio.muted {
+    color: #73736f;
+}
+
+#custom-music.paused {
+    color: #73736f;
+    font-style: italic;
+}
+
+#custom-music.disconnected {
+    color: #73736f;
+}
+
+#custom-lid.lid-nosleep {
+    color: #73736f;
+}
+
+#custom-power {
+    color: #e5534b;
+    background: transparent;
+    border: 1px solid #e5534b;
+    border-radius: 0;
+    font-size: 18px;
+    padding: 0 13px;
+}
+
+#custom-power:hover {
+    color: #1e1f1c;
+    background: #e5534b;
+}
+
+/* Status (signal) colors — alert states only */
+#temperature.critical {
+    color: #e5534b;
+}
+
+#battery.warning:not(.charging) {
+    color: #e8c987;
+}
+
+#battery.critical:not(.charging) {
+    color: #e5534b;
+    animation-name: blink;
+    animation-duration: 0.8s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        background-color: #e5534b;
+        color: #1e1f1c;
+    }
+}
+
+#custom-powermode.performance {
+    color: #e5534b;
+}

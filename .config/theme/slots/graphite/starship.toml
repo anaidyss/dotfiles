@@ -1,0 +1,37 @@
+# Veil-style prompt: box-drawing frame, path and branch in brackets
+format = """
+$directory\
+$git_branch\
+$git_status\
+$line_break\
+$character"""
+
+add_newline = false
+
+[directory]
+style = "bold fg:#d87756"
+format = '[┌─ \[ ](fg:#5c5c58)[$path]($style)[ \]](fg:#5c5c58)'
+truncation_length = 3
+truncation_symbol = "…/"
+home_symbol = "~"
+
+[git_branch]
+style = "fg:#d9b36a"
+format = '[─ \[ ](fg:#5c5c58)[$branch]($style)[ \]](fg:#5c5c58)'
+
+[git_status]
+style = "fg:#73736f"
+format = '[ $all_status$ahead_behind]($style)'
+conflicted = "!"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕"
+untracked = "?"
+modified = "*"
+staged = "+"
+renamed = "»"
+deleted = "x"
+
+[character]
+success_symbol = "[└─❯](bold fg:#d87756) "
+error_symbol = "[└─❯](bold fg:#e5534b) "

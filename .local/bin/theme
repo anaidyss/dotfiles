@@ -1,0 +1,411 @@
+#!/usr/bin/env python3
+"""System palette switcher: theme forest|graphite|toggle|status|audit|wallpaper <file>.
+
+Palettes live in ~/.config/theme/palette.toml (role -> [forest, graphite]).
+Switching replaces colors directly in the configs (single pass, idempotent,
+manual edits outside the palette are left alone), then the programs are reloaded.
+"""
+import glob
+import os
+import re
+import shutil
+import signal
+import subprocess
+import sys
+import tomllib
+from pathlib import Path
+
+CFG = Path.home() / ".config"
+PALETTE = CFG / "theme" / "palette.toml"
+STATE = CFG / "theme" / "current"
+
+HEX = re.compile(r"#([0-9a-fA-F]{6})(?:[0-9a-fA-F]{2})?(?![0-9a-fA-F])")
+BARE = re.compile(r"(=\s*)([0-9a-fA-F]{6})((?:[0-9a-fA-F]{2})?)(?![0-9a-fA-F])")
+RGBFN = re.compile(r"rgb\(([0-9a-fA-F]{6})\)")
+TRUE = re.compile(r"(\b[34]8;2;)(\d{1,3});(\d{1,3});(\d{1,3})")
+FISH = re.compile(r"(:|\\x3d)([0-9a-fA-F]{6})(?![0-9a-fA-F])")
+TOKEN = re.compile(r"(?<![0-9a-zA-Z#_./-])([0-9a-fA-F]{6})(?![0-9a-zA-Z_./-])")
+BINHEX = re.compile(rb"#[0-9a-fA-F]{6}")
+RGBA = re.compile(r"(rgba?\(\s*)(\d{1,3})(\s*,\s*)(\d{1,3})(\s*,\s*)(\d{1,3})")
+
+
+def load():
+    with open(PALETTE, "rb") as f:
+        data = tomllib.load(f)
+    themes = data["themes"]
+    roles = data["roles"]
+    tables = {t: {} for t in themes}
+    for role, vals in roles.items():
+        for t, v in zip(themes, vals):
+            v = v.lower().lstrip("#")
+            if v in tables[t]:
+                sys.exit(f"palette: {t}: color #{v} defined twice ({tables[t][v]}, {role})")
+            tables[t][v] = role
+    for a in themes:
+        for b in themes:
+            if a == b:
+                continue
+            for hx, role in tables[a].items():
+                other = tables[b].get(hx)
+                if other and other != role:
+                    sys.exit(f"palette: #{hx} — {a}:{role} collides with {b}:{other}, reversibility broken")
+    allhex = set()
+    for t in tables.values():
+        allhex |= set(t)
+    for fm in data["targets"].get("filemaps", []):
+        fm["_map"] = {k.lower().lstrip("#"): v.lower().lstrip("#") for k, v in fm["map"].items()}
+        if len(set(fm["_map"].values())) != len(fm["_map"]):
+            sys.exit(f"filemap {fm['file']}: values must be unique (otherwise not reversible)")
+        for k, v in fm["_map"].items():
+            if k not in tables[fm["theme"]]:
+                sys.exit(f"filemap {fm['file']}: #{k} is not in the palette {fm['theme']}")
+            if v in allhex:
+                sys.exit(f"filemap {fm['file']}: #{v} is already used by the palette, pick another shade")
+    return data, themes, roles, tables
+
+
+def mapping(themes, roles, target):
+    """hex (no #) of any other theme -> hex of the target theme."""
+    ti = themes.index(target)
+    m = {}
+    for vals in roles.values():
+        tv = vals[ti].lower().lstrip("#")
+        for i, v in enumerate(vals):
+            if i != ti:
+                m[v.lower().lstrip("#")] = tv
+    return m
+
+
+def convert(text, m, unknown=None, only=None):
+    def sub_hex(mo):
+        h = mo.group(1).lower()
+        full = mo.group(0)
+        if h in m:
+            return "#" + m[h] + full[7:]
+        if unknown is not None:
+            unknown.add(h)
+        return full
+
+    def sub_bare(mo):
+        h = mo.group(2).lower()
+        if h in m:
+            return mo.group(1) + m[h] + mo.group(3)
+        return mo.group(0)
+
+    def sub_rgbfn(mo):
+        h = mo.group(1).lower()
+        return f"rgb({m[h]})" if h in m else mo.group(0)
+
+    def sub_rgba(mo):
+        r, g, b = int(mo.group(2)), int(mo.group(4)), int(mo.group(6))
+        h = f"{r:02x}{g:02x}{b:02x}"
+        if h not in m:
+            if unknown is not None:
+                unknown.add(h)
+            return mo.group(0)
+        n = m[h]
+        return (mo.group(1) + str(int(n[0:2], 16)) + mo.group(3)
+                + str(int(n[2:4], 16)) + mo.group(5) + str(int(n[4:6], 16)))
+
+    def sub_true(mo):
+        h = f"{int(mo.group(2)):02x}{int(mo.group(3)):02x}{int(mo.group(4)):02x}"
+        if h not in m:
+            if unknown is not None:
+                unknown.add(h)
+            return mo.group(0)
+        n = m[h]
+        return f"{mo.group(1)}{int(n[0:2], 16)};{int(n[2:4], 16)};{int(n[4:6], 16)}"
+
+    if only == "true":
+        return TRUE.sub(sub_true, text)
+    text = TRUE.sub(sub_true, text)
+    text = HEX.sub(sub_hex, text)
+    text = RGBFN.sub(sub_rgbfn, text)
+    text = RGBA.sub(sub_rgba, text)
+    return text
+
+
+def expand(pats):
+    out = []
+    for pat in pats:
+        base = Path.home() if pat.startswith("~/") else CFG
+        out += [Path(p) for p in glob.glob(str(base / pat.removeprefix("~/")), recursive=True)]
+    return sorted(set(out))
+
+
+def region_convert(text, fm, inverse):
+    m = {v: k for k, v in fm["_map"].items()} if inverse else fm["_map"]
+    a, b = 0, len(text)
+    if fm.get("from"):
+        mo = re.search(fm["from"], text, re.M)
+        a = mo.start() if mo else len(text)
+    if fm.get("to"):
+        mo = re.search(fm["to"], text[a + 1:], re.M)
+        b = a + 1 + mo.start() if mo else len(text)
+    only = "true" if fm.get("escapes_only") else None
+    return text[:a] + convert(text[a:b], m, only=only) + text[b:]
+
+
+def convert_file(p, text, m, data, target):
+    fms = [fm for fm in data["targets"].get("filemaps", []) if p in expand([fm["file"]])]
+    for fm in fms:
+        if fm["theme"] != target:
+            text = region_convert(text, fm, True)
+    text = convert(text, m)
+    for fm in fms:
+        if fm["theme"] == target:
+            text = region_convert(text, fm, False)
+    return text
+
+
+def targets(data):
+    t = data["targets"]
+    return expand(t["files"]), expand(t.get("bare_files", []))
+
+
+def token_convert(text, m):
+    return TOKEN.sub(lambda mo: m.get(mo.group(1).lower(), mo.group(1)), text)
+
+
+def binary_convert(blob, m):
+    def sub(mo):
+        h = mo.group(0)[1:].decode().lower()
+        return b"#" + m[h].encode() if h in m else mo.group(0)
+    return BINHEX.sub(sub, blob)
+
+
+def fish_convert(text, m):
+    def line(ln):
+        if not re.match(r"SETUVAR (--\S+ )*fish_(pager_)?color_", ln):
+            return ln
+        return FISH.sub(lambda mo: mo.group(1) + m.get(mo.group(2).lower(), mo.group(2)), ln)
+    return "".join(line(ln) for ln in text.splitlines(keepends=True))
+
+
+def rel(p):
+    try:
+        return p.relative_to(CFG)
+    except ValueError:
+        return p
+
+
+def read(p):
+    return p.read_text(encoding="utf-8")
+
+
+def write_if_changed(p, text):
+    if read(p) != text:
+        p.write_text(text, encoding="utf-8")
+        return True
+    return False
+
+
+def bare_convert(text, m):
+    return BARE.sub(lambda mo: mo.group(1) + m.get(mo.group(2).lower(), mo.group(2)) + mo.group(3), text)
+
+
+def current():
+    return STATE.read_text().strip() if STATE.exists() else "forest"
+
+
+def wallpaper_set(data, theme, original=None):
+    """symlink wallpaper.jpg -> original (forest) or the theme's tinted copy. True if the link changed."""
+    wp = data["wallpaper"]
+    link = Path.home() / wp["link"]
+    state = CFG / "theme" / "wallpaper"
+    if original:
+        state.write_text(str(Path(original).resolve()) + "\n")
+    if state.exists():
+        orig = Path(state.read_text().strip())
+    else:
+        orig = Path(os.path.realpath(link))
+        state.write_text(str(orig) + "\n")
+    recipe = wp.get(theme)
+    dst = orig
+    if recipe and orig.exists():
+        dst = Path.home() / wp["cache"] / theme / (orig.stem + ".jpg")
+        if not dst.exists() or dst.stat().st_mtime < orig.stat().st_mtime:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            stops = [a for st in recipe["stops"] for a in ("xc:" + st,)]
+            cmd = ["magick", str(orig), "-colorspace", "Gray", "-level", recipe["level"],
+                   "-gamma", str(recipe["gamma"]), "(", "-size", "1x1", *stops, "+append",
+                   "-filter", "Cubic", "-resize", "256x1!", ")", "-clut", "-quality", "93", str(dst)]
+            subprocess.run(cmd, check=True)
+    if not dst.exists():
+        return False
+    if link.is_symlink() and Path(os.readlink(link)) == dst:
+        return False
+    tmp = link.with_name(link.name + ".tmp")
+    tmp.unlink(missing_ok=True)
+    tmp.symlink_to(dst)
+    tmp.replace(link)
+    return True
+
+
+def swap_slots(data, prev, target):
+    """Files that differ structurally per theme: each theme has its own full file (slot).
+    On a theme change the live file is saved to the previous theme's slot (edits aren't lost)."""
+    changed = []
+    for sw in data["targets"].get("swaps", []):
+        live = Path.home() / sw["live"][2:] if sw["live"].startswith("~/") else CFG / sw["live"]
+        if not live.parent.is_dir():          # the app isn't installed on this machine — skip
+            continue
+        tslot = CFG / sw[target] if target in sw else None
+        already = tslot is not None and live.exists() and tslot.exists() and live.read_bytes() == tslot.read_bytes()
+        if prev != target and prev in sw and live.exists() and not already:
+            slot = CFG / sw[prev]
+            slot.parent.mkdir(parents=True, exist_ok=True)
+            if not slot.exists() or slot.read_bytes() != live.read_bytes():
+                slot.write_bytes(live.read_bytes())
+        if prev != target and target in sw and (CFG / sw[target]).exists():
+            new = (CFG / sw[target]).read_bytes()
+            if not live.exists() or live.read_bytes() != new:
+                live.write_bytes(new)
+                changed.append(live)
+    return changed
+
+
+def apply(target):
+    data, themes, roles, tables = load()
+    if target not in themes:
+        sys.exit(f"no such theme: {target} (available: {', '.join(themes)})")
+    m = mapping(themes, roles, target)
+    files, bare = targets(data)
+    changed = swap_slots(data, current(), target)
+    for p in files:
+        if p.is_file() and write_if_changed(p, convert_file(p, read(p), m, data, target)):
+            changed.append(p)
+    for p in bare:
+        if p.is_file() and write_if_changed(p, bare_convert(read(p), m)):
+            changed.append(p)
+
+    for p in expand(data["targets"].get("fish_files", [])):
+        if p.is_file() and write_if_changed(p, fish_convert(read(p), m)):
+            changed.append(p)
+
+    for p in expand(data["targets"].get("token_files", [])):
+        if p.is_file() and write_if_changed(p, token_convert(read(p), m)):
+            changed.append(p)
+    for p in expand(data["targets"].get("binary_files", [])):
+        if p.is_file():
+            blob = p.read_bytes()
+            new = binary_convert(blob, m)
+            if new != blob:
+                tmp = p.with_name(p.name + ".tmp")
+                tmp.write_bytes(new)
+                shutil.copymode(p, tmp)
+                tmp.replace(p)
+                changed.append(p)
+    if data.get("wallpaper") and wallpaper_set(data, target):
+        changed.append(Path(data["wallpaper"]["link"]))
+    for g in data.get("gsettings", []):
+        sh("gsettings", "set", g["schema"], g["key"], g[target])
+
+    # themes named in the file: the forest file is canonical, the rest are generated from it
+    base = themes[0]
+    for v in data["targets"].get("variants", []):
+        src = CFG / v["src"]
+        for t in themes[1:]:
+            dst = CFG / v["dst"].format(theme=t, Theme=t.capitalize())
+            body = convert(read(src), mapping(themes, roles, t))
+            body = body.replace(base.capitalize(), t.capitalize()).replace(base, t)
+            if not dst.exists() or read(dst) != body:
+                dst.write_text(body, encoding="utf-8")
+    for s in data["targets"].get("selectors", []) + data["targets"].get("settings", []):
+        p = CFG / s["file"]
+        val = s.get(target, s.get("value", "")).replace("{theme}", target).replace("{Theme}", target.capitalize())
+        new = re.sub(s["pattern"], lambda mo: mo.group(1) + val + mo.group(3), read(p), flags=re.M)
+        if write_if_changed(p, new):
+            changed.append(p)
+
+    STATE.write_text(target + "\n")
+    return changed
+
+
+def sh(*cmd, bg=False):
+    try:
+        if bg:
+            subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        else:
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+
+
+def pids(name):
+    out = subprocess.run(["pgrep", "-x", name], capture_output=True, text=True).stdout.split()
+    return [int(x) for x in out]
+
+
+def restart_swaybg():
+    wp = Path.home() / "Pictures/Wallpapers/wallpaper.jpg"
+    sh("pkill", "-x", "swaybg")
+    sh("swaybg", "-i", str(wp), "-m", "fill", bg=True)
+
+
+def reload_apps():
+    for pid in pids("waybar"):
+        os.kill(pid, signal.SIGUSR2)
+    sh("makoctl", "reload")
+    for pid in pids("kitty"):
+        os.kill(pid, signal.SIGUSR1)
+    if pids("swayosd-server"):
+        sh("pkill", "-x", "swayosd-server")
+        sh("swayosd-server", bg=True)
+    restart_swaybg()
+    if shutil.which("bat"):
+        sh("bat", "cache", "--build")
+
+
+def audit():
+    data, themes, roles, tables = load()
+    files, bare = targets(data)
+    known = set()
+    for t in tables.values():
+        known |= set(t)
+    for fm in data["targets"].get("filemaps", []):
+        known |= set(fm["_map"].values())
+    unknown = {}
+    skip = set(expand(data["targets"].get("audit_skip", [])))
+    files = [f for f in files if f not in skip]
+    for p in files + [CFG / v["src"] for v in data["targets"].get("variants", [])]:
+        u = set()
+        convert(read(p), {k: k for k in known}, u)
+        for h in u:
+            unknown.setdefault(h, []).append(rel(p))
+    for p in bare:
+        for mo in BARE.finditer(read(p)):
+            if mo.group(2).lower() not in known:
+                unknown.setdefault(mo.group(2).lower(), []).append(rel(p))
+    if not unknown:
+        print("all colors in the target files are described in the palette")
+    for h, ps in sorted(unknown.items()):
+        print(f"#{h}  {', '.join(sorted({str(x) for x in ps}))[:140]}")
+
+
+def main():
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "status"
+    if cmd == "status":
+        print(current())
+        return
+    if cmd == "audit":
+        audit()
+        return
+    data, themes, _, _ = load()
+    if cmd == "wallpaper":
+        if len(sys.argv) < 3:
+            sys.exit("theme wallpaper <file>")
+        wallpaper_set(data, current(), sys.argv[2])
+        restart_swaybg()
+        return
+    if cmd == "toggle":
+        cur = current()
+        cmd = themes[(themes.index(cur) + 1) % len(themes)] if cur in themes else themes[0]
+    changed = apply(cmd)
+    reload_apps()
+    print(f"theme: {cmd}  (files changed: {len(changed)})")
+    print("GTK/btop/nvim/qutebrowser pick it up on restart; Spotify: spicetify apply")
+
+
+if __name__ == "__main__":
+    main()

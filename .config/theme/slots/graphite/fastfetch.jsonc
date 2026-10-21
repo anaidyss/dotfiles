@@ -1,0 +1,128 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "file",
+    "source": "/home/anaidyss/.config/fastfetch/fedora-veil.txt",
+    "position": "left",
+    "color": {
+      "1": "#d87756",
+      "2": "#5c5c58"
+    },
+    "padding": {
+      "left": 0,
+      "right": 1,
+      "top": 1
+    }
+  },
+  "display": {
+    "separator": " "
+  },
+  "modules": [
+    {
+      "type": "title",
+      "color": {
+        "user": "#d87756",
+        "at": "#73736f",
+        "host": "#d9b36a"
+      }
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;92;92;88m┌─ \u001b[38;2;216;119;86m[ SYSTEM ] \u001b[38;2;92;92;88m─────────────────────────────────────────────────\u001b[0m"
+    },
+    {
+      "type": "os",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m OS:        ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "kernel",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m KERNEL:    ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "uptime",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m UPTIME:    ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "de",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m DE:        ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "shell",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m SHELL:     ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "terminal",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m TERMINAL:  ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;92;92;88m└──────────────────────────────────────────────────────────────\u001b[0m"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;92;92;88m┌─ \u001b[38;2;216;119;86m[ HARDWARE ] \u001b[38;2;92;92;88m───────────────────────────────────────────────\u001b[0m"
+    },
+    {
+      "type": "cpu",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m CPU:       ",
+      "keyColor": "#d9b36a",
+      "format": "{1} - {8}",
+      "temp": true
+    },
+    {
+      "type": "gpu",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m GPU:       ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "display",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m SCREEN:    ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "memory",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m MEMORY:    ",
+      "keyColor": "#d9b36a"
+    },
+    {
+      "type": "disk",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m FEDORA:    ",
+      "keyColor": "#d9b36a",
+      "folders": "/"
+    },
+    {
+      "type": "disk",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m WINDOWS:   ",
+      "keyColor": "#d9b36a",
+      "folders": "/run/media/anaidyss/805C94315C942446"
+    },
+    {
+      "type": "battery",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m BATTERY:   ",
+      "keyColor": "#d9b36a",
+      "temp": false
+    },
+    {
+      "type": "localip",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m LOCAL_IP:  ",
+      "keyColor": "#d9b36a",
+      "showIpv6": false
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;92;92;88m└──────────────────────────────────────────────────────────────\u001b[0m"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[38;2;92;92;88m███ \u001b[38;2;154;154;152m███ \u001b[38;2;216;119;86m███ \u001b[38;2;217;179;106m███ \u001b[38;2;229;83;75m███ \u001b[38;2;111;152;204m███\u001b[0m"
+    }
+  ]
+}

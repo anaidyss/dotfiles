@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""ff-box — closes the ┌─ ┐ │ │ └─ ┘ boxes in fastfetch output (reads stdin, keeps ANSI).
+Box width is FFBOX_WIDTH (default 64); long lines are truncated with “…”."""
+import os
+import re
+import sys
+import unicodedata
+
+W = int(os.environ.get("FFBOX_WIDTH", "64"))
+# column to the left of which the logo sits (the logo frame is also made of ┌│└ and must not count as a box)
+MIN_COL = int(os.environ.get("FFBOX_MIN_COL", "21"))
+SGR = re.compile(r"\x1b\[[0-9;]*m")
+BOX = "┌│└"
+
+
+def cw(ch):
+    if unicodedata.combining(ch):
+        return 0
+    return 2 if unicodedata.east_asian_width(ch) in ("W", "F") else 1
+
+
+def tokens(line):
+    out, pos = [], 0
+    for m in SGR.finditer(line):
+        out += [(False, c) for c in line[pos:m.start()]]
+        out.append((True, m.group()))
+        pos = m.end()
+    out += [(False, c) for c in line[pos:]]
+    return out
+
+
+def vis(toks):
+    return sum(cw(t) for esc, t in toks if not esc)
+
+
+def fit(line):
+    toks = tokens(line)
+    col, left = 0, None
+    for esc, t in toks:
+        if esc:
+            continue
+        if t in BOX and col >= MIN_COL:
+            left = col
+            break
+        col += cw(t)
+    if left is None:
+        return line
+    col2, kind = 0, None
+    for esc, t in toks:
+        if esc:
+            continue
+        if t in BOX and col2 >= MIN_COL:
+            kind = t
+            break
+        col2 += cw(t)
+    # tail: strip trailing resets and spaces
+    while toks and ((toks[-1][0]) or toks[-1][1] == " "):
+        toks.pop()
+    right = left + W - 1                     # column of the right box character
+    rail = next((t for esc, t in toks if esc and t != "\x1b[0m" and t != "\x1b[m"), "")  # box color — the line's first SGR
+    # box color: the SGR right before the first box character
+    last, col3 = "", 0
+    for esc, t in toks:
+        if esc:
+            last = t
+        else:
+            if t in BOX and col3 >= MIN_COL:
+                rail = last
+                break
+            col3 += cw(t)
+    if vis(toks) > right:                    # truncate with “…”
+        while vis(toks) > right - 1:
+            toks.pop()
+        toks.append((False, "…"))
+    pad = right - vis(toks)
+    if kind == "│":
+        body = "".join(t for _e, t in toks) + " " * pad + rail + "│"
+    else:
+        body = "".join(t for _e, t in toks) + "─" * pad + ("┐" if kind == "┌" else "┘")
+    return body + "\x1b[0m"
+
+
+for ln in sys.stdin.read().split("\n"):
+    sys.stdout.write(fit(ln) + "\n")

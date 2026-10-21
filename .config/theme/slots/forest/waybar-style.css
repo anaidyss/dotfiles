@@ -1,0 +1,179 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrains Mono", "JetBrainsMono Nerd Font", monospace;
+    font-weight: 500;
+    font-size: 14px;
+    min-height: 0;
+}
+
+/* Single opaque bar */
+window#waybar {
+    background-color: rgba(20, 27, 24, 0.98);
+    border: 1px solid rgba(166, 227, 161, 0.08);
+    border-radius: 10px;
+}
+
+/* All modules — transparent blocks inside the bar */
+#custom-workspaces,
+#language,
+#custom-weather,
+#clock,
+#network,
+#cpu,
+#temperature,
+#pulseaudio,
+#battery,
+#custom-power,
+#custom-center,
+#custom-powermode,
+#custom-lid,
+#custom-music,
+#custom-music-toggle,
+#custom-wifi,
+#custom-bluetooth {
+    background-color: transparent;
+    padding: 0 10px;
+    margin: 0;
+    color: #cddbd0;
+}
+
+/* Workspaces (custom niri-workspaces-rs module) */
+#custom-workspaces {
+    padding: 0 6px;
+    background: rgba(227, 192, 120, 0.07);
+    border: 1px solid rgba(227, 192, 120, 0.28);
+    border-radius: 8px;
+}
+
+/* Accent 1 — green: "system life" */
+#temperature {
+    color: #a6e3a1;
+}
+
+#battery {
+    color: #a6e3a1;
+    margin-right: 8px;
+}
+
+#pulseaudio {
+    color: #a6e3a1;
+}
+
+#custom-powermode.power-saver {
+    color: #a6e3a1;
+}
+
+#custom-lid.lid-sleep {
+    color: #a6e3a1;
+}
+
+#custom-music {
+    color: #a6e3a1;
+}
+
+#custom-center {
+    color: #a6e3a1;
+    padding: 0 6px;
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Symbols 2", monospace;
+}
+
+/* Accent 2 — amber: "info/network" */
+#clock {
+    color: #e3c078;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 12px;
+    border: 1px solid rgba(227, 192, 120, 0.45);
+    border-radius: 8px;
+    background: rgba(227, 192, 120, 0.08);
+}
+
+#language {
+    color: #e3c078;
+}
+
+#custom-wifi {
+    color: #e3c078;
+}
+
+#custom-bluetooth {
+    color: #8ab6d6;
+}
+
+#cpu {
+    color: #e3c078;
+}
+
+#battery.charging {
+    color: #e3c078;
+}
+
+#custom-powermode.balanced {
+    color: #e3c078;
+}
+
+#custom-music-toggle {
+    color: #e3c078;
+}
+
+/* Muted states */
+#pulseaudio.muted {
+    color: #64766a;
+}
+
+#custom-music.paused {
+    color: #64766a;
+    font-style: italic;
+}
+
+#custom-music.disconnected {
+    color: #64766a;
+}
+
+#custom-lid.lid-nosleep {
+    color: #64766a;
+}
+
+#custom-power {
+    color: #c9745c;
+    background: rgba(201, 116, 92, 0.16);
+    border: 1px solid rgba(201, 116, 92, 0.5);
+    border-radius: 8px;
+    font-size: 18px;
+    padding: 0 13px;
+}
+
+#custom-power:hover {
+    color: #c9745c;
+    background: rgba(201, 116, 92, 0.30);
+}
+
+/* Status (signal) colors — alert states only */
+#temperature.critical {
+    color: #c9745c;
+}
+
+#battery.warning:not(.charging) {
+    color: #e3c078;
+}
+
+#battery.critical:not(.charging) {
+    color: #c9745c;
+    animation-name: blink;
+    animation-duration: 0.8s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        background-color: #c9745c;
+        color: #131a16;
+    }
+}
+
+#custom-powermode.performance {
+    color: #c9745c;
+}

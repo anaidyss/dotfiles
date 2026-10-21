@@ -1,0 +1,41 @@
+# two-line prompt
+format = """
+$directory\
+$git_branch\
+$git_status\
+$line_break\
+$character"""
+
+add_newline = false
+
+[directory]
+# yellow pill with the folder
+style = "bg:yellow fg:black bold"
+format = '[](fg:yellow)[  $path ]($style)[](fg:yellow) '
+truncation_length = 3
+truncation_symbol = "…/"
+home_symbol = "~"
+
+[git_branch]
+# branch — also a pill, amber
+style = "bg:bright-yellow fg:black bold"
+format = '[](fg:bright-yellow)[  $branch ]($style)[](fg:bright-yellow) '
+
+[git_status]
+# status as icons, no background
+style = "fg:bright-yellow bold"
+format = '[$all_status$ahead_behind]($style) '
+conflicted = " "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕ "
+untracked = " "
+modified = " "
+staged = " "
+renamed = " "
+deleted = " "
+
+[character]
+# the arrow turns red if the command failed
+success_symbol = "[❯](bold yellow) "
+error_symbol = "[❯](bold red) "
