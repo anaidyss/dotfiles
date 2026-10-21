@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+"""veil-audio — audio menu in the veilkit design system: [ AUDIO ]. pactl (PipeWire-pulse), refreshed via `pactl subscribe`."""
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.expanduser("~/.local/lib/veilkit"))
+import veilkit as vk  # noqa: E402
+from veilkit import Gio, GLib, Gtk  # noqa: E402
+
+HIDDEN = ("effect_", "easyeffects")
+PREFIX = "Core Ultra 200H/200V Series Processors HD Audio"
+
+
+def unplugged(o):
+    port = next((p for p in o.get("ports", []) if p.get("name") == o.get("active_port")), None)
+    return bool(port and port.get("availability") == "not available")
+
+
+def pct(obj):
+    vols = list((obj.get("volume") or {}).values())
+    return int(vols[0]["value_percent"].rstrip("%")) if vols else 0
+
+
+def build(win):
+    err = vk.ErrorLine()
+    data = {"sinks": [], "sources": [], "dsink": "", "dsource": ""}
+    boxes = {k: Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4) for k in ("sink", "source")}
+    ctl = {}
+
+    def fail(m):
+        vk.show_error(err, m or "")
+
+    def make_ctl(kind):
+        cmd = "sink" if kind == "sink" else "source"
+        scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 150, 1)
+        scale.set_draw_value(False)
+        scale.set_hexpand(True)
+        val = Gtk.Label(label="0%", width_chars=5, xalign=1)
+        send = vk.debounce(80, lambda: vk.run_async(
+            ["pactl", f"set-{cmd}-volume", f"@DEFAULT_{cmd.upper()}@", f"{int(scale.get_value())}%"], None))
+        busy = {"v": False}
+
+        def changed(_s):
+            val.set_label(f"{int(scale.get_value())}%")
+            if not busy["v"]:
+                send()
+        scale.connect("value-changed", changed)
+        mute = vk.Toggle("mute", False, lambda v: vk.run_async(["pactl", f"set-{cmd}-mute", f"@DEFAULT_{cmd.upper()}@", "1" if v else "0"], None))
+        row = Gtk.Box(spacing=8)
+        row.append(scale)
+        row.append(val)
+        ctl[kind] = {"scale": scale, "val": val, "mute": mute, "busy": busy}
+        return row
+
+    out_row, in_row = make_ctl("sink"), make_ctl("source")
+
+    def render():
+        for kind, key, dkey, items in (("sink", "sink", "dsink", data["sinks"]), ("source", "source", "dsource", data["sources"])):
+            vk.clear(boxes[kind])
+            cur = next((o for o in items if o["name"] == data[dkey]), None)
+            for o in items:
+                if o["name"] != data[dkey] and (o["name"].startswith(HIDDEN) or o["name"].endswith(".monitor") or unplugged(o)):
+                    continue
+                active = o["name"] == data[dkey]
+                mark = vk.span("●" if active else " ", vk.C["accent"])
+                label = f"{mark} {vk.esc((o.get('description') or o['name']).replace(PREFIX, 'HD AUDIO'))}"
+                boxes[kind].append(vk.ListButton(label, (lambda n=o["name"], k=key: vk.run_async(["pactl", f"set-default-{k}", n], None)), active))
+            c = ctl[kind]
+            c["busy"]["v"] = True
+            c["scale"].set_value(pct(cur) if cur else 0)
+            c["scale"].set_sensitive(cur is not None)
+            c["val"].set_label(f"{pct(cur) if cur else 0}%")
+            c["busy"]["v"] = False
+            c["mute"].set_state(bool(cur and cur.get("mute")))
+        vk.refit(win)
+
+    def refresh():
+        pending = {"n": 4}
+
+        def part(name, parser):
+            def cb(out):
+                if out is None:
+                    fail(f"pactl: no data ({name})")
+                else:
+                    try:
+                        data[name] = parser(out)
+                    except (ValueError, KeyError):
+                        fail(f"pactl: could not parse output ({name})")
+                pending["n"] -= 1
+                if pending["n"] == 0:
+                    render()
+            return cb
+        vk.run_async(["pactl", "-f", "json", "list", "sinks"], part("sinks", json.loads))
+        vk.run_async(["pactl", "-f", "json", "list", "sources"], part("sources", json.loads))
+        vk.run_async(["pactl", "get-default-sink"], part("dsink", str.strip))
+        vk.run_async(["pactl", "get-default-source"], part("dsource", str.strip))
+        fail("")
+
+    sched = vk.debounce(150, refresh)
+    try:
+        sub = Gio.Subprocess.new(["pactl", "subscribe"], Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)
+        stream = Gio.DataInputStream.new(sub.get_stdout_pipe())
+
+        def on_line(s, res):
+            try:
+                line, _ = s.read_line_finish_utf8(res)
+            except GLib.Error:
+                return
+            if line is None:
+                return
+            if "sink" in line or "source" in line or "server" in line:
+                sched()
+            s.read_line_async(GLib.PRIORITY_DEFAULT, None, on_line)
+        stream.read_line_async(GLib.PRIORITY_DEFAULT, None, on_line)
+        win.connect("destroy", lambda *_: sub.force_exit())
+    except GLib.Error as e:
+        fail(f"pactl subscribe: {e.message}")
+    hint = Gtk.Label(label="CLICK: SET DEFAULT   ESC: CLOSE", xalign=0)
+    hint.add_css_class("key")
+    box = vk.Panel("AUDIO", err, vk.Section("output"), boxes["sink"], out_row, ctl["sink"]["mute"],
+                   vk.Separator(), vk.Section("input"), boxes["source"], in_row, ctl["source"]["mute"],
+                   vk.Separator(), hint)
+    refresh()
+    return box
+
+
+vk.run_menu("org.veil.audio", build, width=440)

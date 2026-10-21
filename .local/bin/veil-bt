@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""veil-bt — Bluetooth menu in the veilkit design system: [ BLUETOOTH ]. BlueZ over D-Bus, events instead of polling."""
+import os
+import sys
+
+sys.path.insert(0, os.path.expanduser("~/.local/lib/veilkit"))
+import veilkit as vk  # noqa: E402
+from veilkit import Gio, GLib, Gtk  # noqa: E402
+
+BUS = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
+ICONS = {"audio-headphones": "󰋋", "audio-headset": "󰋎", "audio-card": "󰓃", "input-mouse": "󰍽",
+         "input-keyboard": "󰌌", "input-gaming": "󰊴", "phone": "󰏲", "computer": "󰌢"}
+
+
+def call(path, iface, method, params=None, cb=None, reply=None):
+    def done(b, res):
+        try:
+            out = b.call_finish(res)
+            if cb:
+                cb(out, None)
+        except GLib.Error as e:
+            if cb:
+                cb(None, e.message)
+    BUS.call("org.bluez", path, iface, method, params, GLib.VariantType(reply) if reply else None,
+             Gio.DBusCallFlags.NONE, 20000, None, done)
+
+
+def set_prop(path, iface, name, variant, cb=None):
+    call(path, "org.freedesktop.DBus.Properties", "Set", GLib.Variant("(ssv)", (iface, name, variant)), cb)
+
+
+def build(win):
+    err = vk.ErrorLine()
+    st = {"adapter": None, "powered": False, "discovering": False, "devs": {}, "forget": None}
+    listbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+    near_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+    st_row, st_val = vk.Row("status")
+
+    def fail(msg):
+        vk.show_error(err, msg or "")
+
+    def got(out, msg):
+        if msg:
+            fail(msg)
+            return
+        fail("")
+        objs = out.unpack()[0]
+        st["adapter"], st["devs"] = None, {}
+        for path, ifs in objs.items():
+            if "org.bluez.Adapter1" in ifs and st["adapter"] is None:
+                st["adapter"] = path
+                st["powered"] = ifs["org.bluez.Adapter1"].get("Powered", False)
+                st["discovering"] = ifs["org.bluez.Adapter1"].get("Discovering", False)
+            if "org.bluez.Device1" in ifs:
+                d = dict(ifs["org.bluez.Device1"])
+                d["Battery"] = ifs.get("org.bluez.Battery1", {}).get("Percentage")
+                st["devs"][path] = d
+        render()
+
+    def refresh():
+        call("/", "org.freedesktop.DBus.ObjectManager", "GetManagedObjects", None, got, "(a{oa{sa{sv}}})")
+
+    sched = vk.debounce(300, refresh)
+
+    def row(path, d):
+        name = d.get("Alias") or d.get("Address", "?")
+        icon = ICONS.get(d.get("Icon", ""), "󰂯")
+        conn, paired = d.get("Connected", False), d.get("Paired", False)
+        bat = d.get("Battery")
+        label = f"{vk.span(icon, vk.C['accent'] if conn else vk.C['dim'])}  {vk.esc(name)}"
+        if conn:
+            label += vk.span("   CONNECTED", vk.C["accent2"])
+        if bat is not None:
+            label += vk.span(f"  {bat}%", vk.C["danger"] if bat <= 15 else vk.C["dim"])
+        if not paired and d.get("RSSI") is not None:
+            label += vk.span(f"  {d['RSSI']} dBm", vk.C["dim"])
+        if st["forget"] == path:
+            label = vk.span(f"!! REMOVE {name}? RIGHT-CLICK AGAIN", vk.C["danger"], True)
+
+        def act(p=path, dd=d):
+            if dd.get("Connected"):
+                call(p, "org.bluez.Device1", "Disconnect", None, lambda o, m: fail(m))
+            elif dd.get("Paired"):
+                call(p, "org.bluez.Device1", "Connect", None, lambda o, m: fail(m))
+            else:
+                pair(p, dd)
+        btn = vk.ListButton(label, act, conn)
+        if paired:
+            rc = Gtk.GestureClick(button=3)
+
+            def right(_g, _n, _x, _y, p=path):
+                if st["forget"] == p:
+                    st["forget"] = None
+                    call(st["adapter"], "org.bluez.Adapter1", "RemoveDevice", GLib.Variant("(o)", (p,)), lambda o, m: fail(m))
+                else:
+                    st["forget"] = p
+                    GLib.timeout_add_seconds(3, lambda: (st.update(forget=None), render(), False)[2])
+                    render()
+            rc.connect("pressed", right)
+            btn.add_controller(rc)
+        return btn
+
+    def pair(path, d):
+        mac = d.get("Address", "")
+        fail("")
+        # pairing needs an agent — the only external process (bluetoothctl)
+        vk.run_async(["bluetoothctl", "--timeout", "30", "--agent", "NoInputNoOutput", "pair", mac],
+                     lambda out: (set_prop(path, "org.bluez.Device1", "Trusted", GLib.Variant("b", True)),
+                                  call(path, "org.bluez.Device1", "Connect", None, lambda o, m: fail(m)))
+                     if out and "successful" in out.lower() else fail(f"PAIR FAILED: {mac}"))
+
+    def render():
+        radio.set_state(st["powered"])
+        if st["adapter"] is None:
+            st_val.set_markup(vk.span("NO ADAPTER", vk.C["danger"]))
+        elif not st["powered"]:
+            st_val.set_markup(vk.span("POWER OFF", vk.C["dim"]))
+        else:
+            n = sum(1 for d in st["devs"].values() if d.get("Connected"))
+            st_val.set_markup(vk.span("SCANNING…", vk.C["accent2"]) if st["discovering"] else vk.esc(f"IDLE  {n} CONNECTED"))
+        vk.clear(listbox)
+        vk.clear(near_box)
+        paired = [(p, d) for p, d in st["devs"].items() if d.get("Paired")]
+        near = [(p, d) for p, d in st["devs"].items() if not d.get("Paired") and d.get("Alias") and not d.get("Alias").replace("-", ":").count(":") >= 5]
+        for p, d in sorted(paired, key=lambda x: (not x[1].get("Connected"), x[1].get("Alias", ""))):
+            listbox.append(row(p, d))
+        for p, d in sorted(near, key=lambda x: -(x[1].get("RSSI") or -999))[:8]:
+            near_box.append(row(p, d))
+        if not paired:
+            listbox.append(Gtk.Label(label="NO PAIRED DEVICES", xalign=0, css_classes=["key"]))
+        vk.refit(win)
+
+    def set_power(v):
+        if st["adapter"]:
+            set_prop(st["adapter"], "org.bluez.Adapter1", "Powered", GLib.Variant("b", v), lambda o, m: fail(m))
+
+    radio = vk.Toggle("power", False, set_power)
+
+    def discovery(on):
+        if st["adapter"] and st["powered"]:
+            call(st["adapter"], "org.bluez.Adapter1", "StartDiscovery" if on else "StopDiscovery", None, lambda o, m: None)
+
+    ids = [BUS.signal_subscribe("org.bluez", "org.freedesktop.DBus.Properties", "PropertiesChanged", None, None,
+                                Gio.DBusSignalFlags.NONE, lambda *a: sched()),
+           BUS.signal_subscribe("org.bluez", "org.freedesktop.DBus.ObjectManager", None, "/", None,
+                                Gio.DBusSignalFlags.NONE, lambda *a: sched())]
+
+    def on_destroy(*_):
+        discovery(False)
+        for i in ids:
+            BUS.signal_unsubscribe(i)
+    win.connect("destroy", on_destroy)
+    hint = Gtk.Label(label="CLICK: CONNECT/PAIR   RMB: REMOVE   ESC: CLOSE", xalign=0)
+    hint.add_css_class("key")
+    box = vk.Panel("BLUETOOTH", err, radio, st_row, vk.Separator(), vk.Section("paired"), vk.Scroll(listbox, 200),
+                   vk.Section("nearby"), vk.Scroll(near_box, 160), vk.Separator(), hint)
+
+    def first(out, msg):
+        got(out, msg)
+        discovery(True)
+    call("/", "org.freedesktop.DBus.ObjectManager", "GetManagedObjects", None, first, "(a{oa{sa{sv}}})")
+    return box
+
+
+vk.run_menu("org.veil.bt", build, width=440)

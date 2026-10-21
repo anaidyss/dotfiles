@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+"""veil-wifi — Wi-Fi menu in the veilkit design system: [ WI-FI ]. libnm in-process, no nmcli."""
+import os
+import sys
+
+sys.path.insert(0, os.path.expanduser("~/.local/lib/veilkit"))
+import veilkit as vk  # noqa: E402
+from veilkit import GLib, Gtk  # noqa: E402
+
+vk.gi.require_version("NM", "1.0")
+from gi.repository import NM  # noqa: E402
+
+SEC_SAE = 0x400  # NM_802_11_AP_SEC_KEY_MGMT_SAE
+
+
+def ssid_of(ap):
+    b = ap.get_ssid()
+    return NM.utils_ssid_to_utf8(b.get_data()) if b else ""
+
+
+def secured(ap):
+    return bool(ap.get_flags() & 1 or ap.get_wpa_flags() or ap.get_rsn_flags())
+
+
+def proto(ap):
+    if ap.get_rsn_flags() & SEC_SAE:
+        return "WPA3"
+    if ap.get_rsn_flags():
+        return "WPA2"
+    if ap.get_wpa_flags():
+        return "WPA"
+    return "WEP" if ap.get_flags() & 1 else "OPEN"
+
+
+def band(freq):
+    return "2.4G" if freq < 3000 else ("5G" if freq < 5900 else "6G")
+
+
+def bars(strength):
+    n = 1 + min(3, strength // 26)
+    return vk.span("▂▄▆█"[:n], vk.C["accent"]) + vk.span("▂▄▆█"[n:], vk.C["line"])
+
+
+def build(win):
+    client = NM.Client.new(None)
+    dev = next((d for d in client.get_devices() if isinstance(d, NM.DeviceWifi)), None)
+    err = vk.ErrorLine()
+    if dev is None:
+        vk.show_error(err, "Wi-Fi adapter not found")
+        return vk.Panel("WI-FI", err)
+
+    listbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+    st_row, st_val = vk.Row("status")
+    sig_row, sig_val = vk.Row("signal")
+    link_row, link_val = vk.Row("link")
+    pw_label = Gtk.Label(xalign=0, use_markup=True, visible=False)
+    pw_entry = Gtk.PasswordEntry(show_peek_icon=True, visible=False)
+    state = {"pending": None, "forget": None, "scan": False}
+    saved_cache = {}
+
+    def fail(text):
+        vk.show_error(err, text)
+
+    def saved():
+        out = {}
+        for c in client.get_connections():
+            sw = c.get_setting_wireless()
+            if sw and sw.get_ssid():
+                out[NM.utils_ssid_to_utf8(sw.get_ssid().get_data())] = c
+        return out
+
+    def finish_cb(fin):
+        def cb(obj, res):
+            try:
+                fin(res)
+                fail("")
+            except GLib.Error as e:
+                fail(str(e.message))
+            refresh()
+        return cb
+
+    def connect_ap(ap):
+        ssid = ssid_of(ap)
+        if ssid in saved_cache:
+            client.activate_connection_async(saved_cache[ssid], dev, None, None, finish_cb(client.activate_connection_finish))
+        elif secured(ap):
+            state["pending"] = ap
+            pw_label.set_markup(vk.span(f"PASSWORD FOR {ssid}:", vk.C["accent"]) + vk.span("  [ENTER] CONNECT", vk.C["dim"]))
+            pw_label.set_visible(True)
+            pw_entry.set_text("")
+            pw_entry.set_visible(True)
+            pw_entry.grab_focus()
+        else:
+            add_and_activate(ap, None)
+
+    def add_and_activate(ap, pw):
+        conn = NM.SimpleConnection.new()
+        sc = NM.SettingConnection.new()
+        sc.set_property(NM.SETTING_CONNECTION_ID, ssid_of(ap))
+        sc.set_property(NM.SETTING_CONNECTION_TYPE, "802-11-wireless")
+        sc.set_property(NM.SETTING_CONNECTION_UUID, NM.utils_uuid_generate())
+        conn.add_setting(sc)
+        sw = NM.SettingWireless.new()
+        sw.set_property(NM.SETTING_WIRELESS_SSID, ap.get_ssid())
+        conn.add_setting(sw)
+        if pw is not None:
+            ss = NM.SettingWirelessSecurity.new()
+            ss.set_property(NM.SETTING_WIRELESS_SECURITY_KEY_MGMT, "sae" if ap.get_rsn_flags() & SEC_SAE else "wpa-psk")
+            ss.set_property(NM.SETTING_WIRELESS_SECURITY_PSK, pw)
+            conn.add_setting(ss)
+        client.add_and_activate_connection_async(conn, dev, ap.get_path(), None, finish_cb(client.add_and_activate_connection_finish))
+
+    def submit_pw(_e):
+        ap, state["pending"] = state["pending"], None
+        pw = pw_entry.get_text()
+        pw_label.set_visible(False)
+        pw_entry.set_visible(False)
+        if ap and pw:
+            add_and_activate(ap, pw)
+
+    pw_entry.connect("activate", submit_pw)
+
+    def forget(ssid):
+        conn = saved_cache.get(ssid)
+        if conn:
+            conn.delete_async(None, finish_cb(conn.delete_finish))
+
+    def row_for(ap, active_ssid):
+        ssid = ssid_of(ap)
+        is_act = ssid == active_ssid
+        mark = vk.span("●" if is_act else ("◆" if ssid in saved_cache else " "), vk.C["accent"] if is_act else vk.C["dim"])
+        sec = vk.span(proto(ap), vk.C["dim"])
+        text = f"{mark} {vk.esc(ssid)}"
+        label = f"{text}   {bars(ap.get_strength())}  {sec}  {vk.span(band(ap.get_frequency()), vk.C['dim'])}"
+        if state["forget"] == ssid:
+            label = vk.span(f"!! FORGET {ssid}? RIGHT-CLICK AGAIN", vk.C["danger"], True)
+        btn = vk.ListButton(label, (lambda a=ap, i=is_act: dev.disconnect_async(None, finish_cb(dev.disconnect_finish)) if i else connect_ap(a)), is_act)
+        rc = Gtk.GestureClick(button=3)
+
+        def right(_g, _n, _x, _y, s=ssid):
+            if s not in saved_cache:
+                return
+            if state["forget"] == s:
+                state["forget"] = None
+                forget(s)
+            else:
+                state["forget"] = s
+                GLib.timeout_add_seconds(3, lambda: (state.update(forget=None), refresh(), False)[2])
+                refresh()
+        rc.connect("pressed", right)
+        btn.add_controller(rc)
+        return btn
+
+    def refresh(*_):
+        saved_cache.clear()
+        saved_cache.update(saved())
+        on = client.wireless_get_enabled()
+        radio.set_state(on)
+        act = dev.get_active_access_point()
+        act_ssid = ssid_of(act) if act else ""
+        if not on:
+            st_val.set_markup(vk.span("RADIO OFF", vk.C["dim"]))
+        elif act:
+            st_val.set_markup(vk.span("CONNECTED", vk.C["accent2"]) + "  " + vk.esc(act_ssid))
+        else:
+            st_val.set_markup(vk.span("SCANNING…" if state["scan"] else "DISCONNECTED", vk.C["dim"]))
+        sig_val.set_markup(f"{vk.meter(act.get_strength() / 100)}  {act.get_strength()}%" if act else vk.span("—", vk.C["dim"]))
+        ip = ""
+        cfg = dev.get_ip4_config()
+        if cfg and cfg.get_addresses():
+            ip = cfg.get_addresses()[0].get_address()
+        link_val.set_markup(vk.esc(f"{band(act.get_frequency())}  {dev.get_bitrate() // 1000} Mb/s  {ip}") if act else vk.span("—", vk.C["dim"]))
+        vk.clear(listbox)
+        best = {}
+        for ap in dev.get_access_points():
+            s = ssid_of(ap)
+            if s and (s not in best or ap.get_strength() > best[s].get_strength()):
+                best[s] = ap
+        for ap in sorted(best.values(), key=lambda a: (ssid_of(a) != act_ssid, -a.get_strength())):
+            listbox.append(row_for(ap, act_ssid))
+        if not best and on:
+            listbox.append(Gtk.Label(label="NO NETWORKS", xalign=0, css_classes=["key"]))
+        vk.refit(win)
+
+    sched = vk.debounce(250, refresh)
+
+    def set_radio(v):
+        client.wireless_set_enabled(v)
+
+    radio = vk.Toggle("radio", client.wireless_get_enabled(), set_radio)
+
+    def rescan(*_):
+        state["scan"] = True
+        refresh()
+
+        def done(obj, res):
+            state["scan"] = False
+            try:
+                dev.request_scan_finish(res)
+            except GLib.Error as e:
+                fail(str(e.message))
+            sched()
+        dev.request_scan_async(None, done)
+
+    for obj, sig in ((client, "notify::wireless-enabled"), (client, "notify::state"), (dev, "access-point-added"),
+                     (dev, "access-point-removed"), (dev, "notify::active-access-point"), (dev, "notify::bitrate")):
+        obj.connect(sig, sched)
+    hint = Gtk.Label(label="R: RESCAN   RMB: FORGET   ESC: CLOSE", xalign=0)
+    hint.add_css_class("key")
+    box = vk.Panel("WI-FI", err, radio, st_row, sig_row, link_row, vk.Separator(), vk.Section("networks"),
+                   vk.Scroll(listbox, 280), pw_label, pw_entry, vk.Separator(), hint)
+    win.rescan = rescan
+    refresh()
+    rescan()
+    return box
+
+
+holder = {}
+vk.run_menu("org.veil.wifi", lambda w: (holder.update(w=w), build(w))[1], width=440,
+            keys={"r": lambda: holder["w"].rescan()})

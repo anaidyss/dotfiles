@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""veil-power — power menu in the veilkit design system: [ POWER ]. Running it again closes it."""
+import os
+import sys
+
+sys.path.insert(0, os.path.expanduser("~/.local/lib/veilkit"))
+import veilkit as vk  # noqa: E402
+from veilkit import GLib, Gtk  # noqa: E402
+
+LOCK = os.path.expanduser("~/.local/bin/veil-lock")
+ACTIONS = [  # (key, name, argv, dangerous)
+    ("l", "lock", [LOCK], False),
+    ("o", "logout", ["niri", "msg", "action", "quit", "--skip-confirmation"], True),
+    ("s", "suspend", ["systemctl", "suspend"], False),
+    ("r", "reboot", ["systemctl", "reboot"], True),
+    ("p", "poweroff", ["systemctl", "poweroff"], True),
+]
+
+
+def build(win):
+    err = vk.ErrorLine()
+    btns = []
+
+    def make(hint, name, argv, danger):
+        def go():
+            win.close_menu()
+            vk.spawn(argv)
+        b = vk.ActionButton(hint, name, go, danger)
+        btns.append(b)
+        return b
+
+    hint = Gtk.Label(label="ESC: CLOSE   ENTER: SELECT", xalign=0)
+    hint.add_css_class("key")
+    box = vk.Panel("POWER", err, *[make(*a) for a in ACTIONS], vk.Separator(), hint)
+    GLib.idle_add(lambda: btns[0].grab_focus() and False)
+    win.hotkeys = {a[0]: b for a, b in zip(ACTIONS, btns)}
+    return box
+
+
+def main():
+    keys = {}
+
+    def press(k):
+        return lambda: keys.get("w") and keys["w"].hotkeys[k].emit("clicked")
+
+    vk.run_menu("org.veil.power", lambda w: (keys.update(w=w), build(w))[1], width=300,
+                keys={a[0]: press(a[0]) for a in ACTIONS})
+
+
+main()

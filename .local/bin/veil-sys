@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+"""veil-sys — system telemetry in the veilkit design system: [ SYS_TELEMETRY ]. Data from /proc and /sys."""
+import os
+import sys
+import time
+
+sys.path.insert(0, os.path.expanduser("~/.local/lib/veilkit"))
+import veilkit as vk  # noqa: E402
+from veilkit import GLib  # noqa: E402
+
+THERMAL = "/sys/class/thermal/thermal_zone13/temp"
+
+
+def rd(path):
+    with open(path) as f:
+        return f.read()
+
+
+def human(n):
+    for u in ("B", "K", "M", "G"):
+        if n < 1024 or u == "G":
+            return f"{n:.0f}{u}" if u == "B" else f"{n:.1f}{u}"
+        n /= 1024
+
+
+class Sampler:
+    def __init__(self):
+        self.cpu = self._cpu()
+        self.net = self._net()
+        self.t = time.monotonic()
+
+    @staticmethod
+    def _cpu():
+        v = [int(x) for x in rd("/proc/stat").splitlines()[0].split()[1:]]
+        return sum(v), v[3] + v[4]
+
+    @staticmethod
+    def _net():
+        rx = tx = 0
+        for ln in rd("/proc/net/dev").splitlines()[2:]:
+            name, data = ln.split(":", 1)
+            if name.strip() == "lo":
+                continue
+            f = data.split()
+            rx += int(f[0])
+            tx += int(f[8])
+        return rx, tx
+
+    def sample(self):
+        c, n, t = self._cpu(), self._net(), time.monotonic()
+        dt = max(t - self.t, 1e-3)
+        dtot, didle = c[0] - self.cpu[0], c[1] - self.cpu[1]
+        out = {"cpu": (1 - didle / dtot) if dtot else 0.0,
+               "rx": (n[0] - self.net[0]) / dt, "tx": (n[1] - self.net[1]) / dt}
+        self.cpu, self.net, self.t = c, n, t
+        return out
+
+
+def build(win):
+    err = vk.ErrorLine()
+    rows = {}
+    items = [vk.Row(k) for k in ("cpu", "ram", "temp", "load", "net", "bat", "uptime")]
+    for k, (row, val) in zip(("cpu", "ram", "temp", "load", "net", "bat", "uptime"), items):
+        rows[k] = val
+    hint = vk.Gtk.Label(label="ESC: CLOSE", xalign=0)
+    hint.add_css_class("key")
+    box = vk.Panel("SYS_TELEMETRY", err, *[r for r, _ in items], vk.Separator(), hint)
+    smp = Sampler()
+    alive = {"v": True}
+    win.connect("destroy", lambda *_: alive.update(v=False))
+
+    def tick():
+        if not alive["v"]:
+            return False
+        problems = []
+        s = smp.sample()
+        rows["cpu"].set_markup(f"{vk.meter(s['cpu'])}  {s['cpu'] * 100:3.0f}%")
+        try:
+            mi = {ln.split(":")[0]: int(ln.split()[1]) * 1024 for ln in rd("/proc/meminfo").splitlines()}
+            used = mi["MemTotal"] - mi["MemAvailable"]
+            rows["ram"].set_markup(f"{vk.meter(used / mi['MemTotal'])}  {vk.esc(human(used))} / {vk.esc(human(mi['MemTotal']))}")
+        except (OSError, KeyError, ValueError):
+            problems.append("RAM: no data from /proc/meminfo")
+        try:
+            temp = int(rd(THERMAL)) / 1000
+            col = vk.C["danger"] if temp >= 80 else vk.C["accent2"]
+            rows["temp"].set_markup(vk.span(f"{temp:.0f}°C", col))
+        except (OSError, ValueError):
+            rows["temp"].set_markup(vk.span("N/A", vk.C["dim"]))
+            problems.append(f"TEMP: no {THERMAL}")
+        rows["load"].set_label(" ".join(rd("/proc/loadavg").split()[:3]))
+        rows["net"].set_markup(f"{vk.span('RX', vk.C['dim'])} {vk.esc(human(s['rx']))}/s   {vk.span('TX', vk.C['dim'])} {vk.esc(human(s['tx']))}/s")
+        try:
+            cap = int(rd("/sys/class/power_supply/BAT0/capacity"))
+            st = rd("/sys/class/power_supply/BAT0/status").strip().upper()
+            col = vk.C["danger"] if cap <= 15 and st != "CHARGING" else vk.C["fg"]
+            rows["bat"].set_markup(f"{vk.meter(cap / 100)}  {vk.span(f'{cap}%', col)} {vk.span(st, vk.C['dim'])}")
+        except (OSError, ValueError):
+            rows["bat"].set_markup(vk.span("N/A", vk.C["dim"]))
+        up = int(float(rd("/proc/uptime").split()[0]))
+        rows["uptime"].set_label(f"{up // 86400}d {up % 86400 // 3600}h {up % 3600 // 60}m")
+        vk.show_error(err, "; ".join(problems))
+        return True
+
+    tick()
+    GLib.timeout_add_seconds(1, tick)
+    return box
+
+
+vk.run_menu("org.veil.sys", build, width=420)
