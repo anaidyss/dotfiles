@@ -1,0 +1,102 @@
+/* ================================================
+   Forest CSD (GTK3) — window titlebars matching the waybar palette
+   bg #1e1f1c / accent #d87756 / teal #e8a838
+   amber #e8c987 / terracotta #e5534b
+   ================================================ */
+
+@import url("veil.css");
+@define-color theme_selected_bg_color #d87756;
+@define-color theme_selected_fg_color #1e1f1c;
+@define-color wm_title #d5d5d3;
+@define-color wm_unfocused_title #73736f;
+@define-color wm_bg #1e1f1c;
+@define-color wm_bg_unfocused #1c1d1b;
+
+/* Titlebar base */
+.titlebar,
+headerbar,
+.csd .titlebar,
+decoration .titlebar {
+    background-image: none;
+    background-color: #1e1f1c;
+    color: #d5d5d3;
+    border-bottom: 1px solid rgba(216, 119, 86, 0.12);
+}
+
+/* Inactive window */
+.titlebar:backdrop,
+headerbar:backdrop {
+    background-image: none;
+    background-color: #1c1d1b;
+    color: #73736f;
+    border-bottom-color: rgba(216, 119, 86, 0.06);
+}
+
+/* Window title — monospace, like waybar */
+.titlebar .title,
+headerbar .title {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", monospace;
+    font-weight: bold;
+    color: inherit;
+}
+
+.titlebar .subtitle,
+headerbar .subtitle {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", monospace;
+    font-size: 9pt;
+    color: #e8a838;
+    opacity: 0.85;
+}
+
+.titlebar:backdrop .title,
+headerbar:backdrop .title,
+.titlebar:backdrop .subtitle,
+headerbar:backdrop .subtitle {
+    color: #73736f;
+}
+
+/* Window control buttons */
+.titlebar button.titlebutton,
+headerbar button.titlebutton {
+    background-color: transparent;
+    color: #73736f;
+    transition: all 200ms ease;
+}
+
+.titlebar button.titlebutton:hover,
+headerbar button.titlebutton:hover {
+    background-color: rgba(216, 119, 86, 0.08);
+    color: #d5d5d3;
+}
+
+/* Close — terracotta */
+.titlebar button.titlebutton.close:hover,
+headerbar button.titlebutton.close:hover {
+    background-color: #e5534b;
+    color: #1e1f1c;
+}
+
+/* Minimize — amber */
+.titlebar button.titlebutton.minimize:hover,
+headerbar button.titlebutton.minimize:hover {
+    background-color: #e8c987;
+    color: #1e1f1c;
+}
+
+/* Maximize — green */
+.titlebar button.titlebutton.maximize:hover,
+headerbar button.titlebutton.maximize:hover {
+    background-color: #d87756;
+    color: #1e1f1c;
+}
+
+.titlebar button.titlebutton:active,
+headerbar button.titlebutton:active {
+    background-color: #e8a838;
+    color: #1e1f1c;
+}
+
+.titlebar:backdrop button.titlebutton,
+headerbar:backdrop button.titlebutton {
+    color: #52524f;
+}

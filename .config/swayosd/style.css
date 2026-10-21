@@ -1,23 +1,23 @@
 window, #window {
-    background-color: rgba(30, 30, 46, 0.85);
-    border-radius: 12px;
-    border: 2px solid #313244;
-    color: #cdd6f4;
+    background-color: rgba(31, 32, 29, 0.85);
+    border-radius: 0px;
+    border: 2px solid #3d3d3b;
+    color: #d6d6d4;
     padding: 8px 12px;
 }
 
 progressbar trough {
-    background: #313244;
-    border-radius: 6px;
+    background: #3d3d3b;
+    border-radius: 0px;
     min-height: 8px;
 }
 
 progressbar progress {
-    background: #a6e3a1;
-    border-radius: 6px;
+    background: #d87756;
+    border-radius: 0px;
     min-height: 8px;
 }
 
 image, label {
-    color: #cdd6f4;
+    color: #d6d6d4;
 }

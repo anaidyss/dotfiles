@@ -34,3 +34,4 @@ if [ -f ~/.config/secrets/env ]; then
     set +a
 fi
 
+export PATH=$PATH:~/go/bin

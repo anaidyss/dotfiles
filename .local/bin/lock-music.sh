@@ -16,9 +16,9 @@ title=$(printf '%s' "$title" | cut -c1-36)
 artist=$(printf '%s' "$artist" | cut -c1-24)
 
 if [ "$status" = "Paused" ]; then
-    printf '<span foreground="#64766a">%s</span>' "$(esc "$title")"
-    [ -n "$artist" ] && printf '<span foreground="#4f6157"> · %s</span>' "$(esc "$artist")"
+    printf '<span foreground="#73736f">%s</span>' "$(esc "$title")"
+    [ -n "$artist" ] && printf '<span foreground="#5c5c58"> · %s</span>' "$(esc "$artist")"
 else
-    printf '<span foreground="#cddbd0">%s</span>' "$(esc "$title")"
-    [ -n "$artist" ] && printf '<span foreground="#93a598"> · %s</span>' "$(esc "$artist")"
+    printf '<span foreground="#d5d5d3">%s</span>' "$(esc "$title")"
+    [ -n "$artist" ] && printf '<span foreground="#9a9a98"> · %s</span>' "$(esc "$artist")"
 fi

@@ -1,136 +1,128 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
-      "source": "fedora",
-      "type": "small",
-      "color": {
-        "1": "#59c2a5",
-        "2": "#a6e3a1",
-        "3": "#5f9790"
-      },
-      "padding": {
-        "top": 1,
-        "left": 2,
-        "right": 3
-      }
+    "type": "file",
+    "source": "/home/anaidyss/.config/fastfetch/fedora-veil.txt",
+    "position": "left",
+    "color": {
+      "1": "#d87756",
+      "2": "#5c5c58"
     },
+    "padding": {
+      "left": 0,
+      "right": 1,
+      "top": 1
+    }
+  },
   "display": {
-    "separator": " 󰄾 "
+    "separator": " "
   },
   "modules": [
     {
       "type": "title",
       "color": {
-        "user": "#a6e3a1",
-        "at": "#64766a",
-        "host": "#59c2a5"
+        "user": "#d87756",
+        "at": "#73736f",
+        "host": "#d9b36a"
       }
     },
     {
       "type": "custom",
-      "format": "\u001b[38;2;89;194;165m╒═════════════════════════  System ════════════════════════╕\u001b[0m"
+      "format": "\u001b[38;2;92;92;88m┌─ \u001b[38;2;216;119;86m[ SYSTEM ] \u001b[38;2;92;92;88m─────────────────────────────────────────────────\u001b[0m"
     },
     {
       "type": "os",
-      "key": "   OS",
-      "keyColor": "#a6e3a1"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m OS:        ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "kernel",
-      "key": "   Kernel",
-      "keyColor": "#a6e3a1"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m KERNEL:    ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "uptime",
-      "key": "  󰅐 Uptime",
-      "keyColor": "#59c2a5"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m UPTIME:    ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "de",
-      "key": "  󰧨 DE",
-      "keyColor": "#59c2a5"
-    },
-    {
-      "type": "packages",
-      "key": "  󰏖 Packages",
-      "keyColor": "#a6e3a1"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m DE:        ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "shell",
-      "key": "   Shell",
-      "keyColor": "#e3c078"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m SHELL:     ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "terminal",
-      "key": "   Terminal",
-      "keyColor": "#e3c078"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m TERMINAL:  ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "custom",
-      "format": "\u001b[38;2;89;194;165m╘════════════════════════════════════════════════════════════╛\u001b[0m"
+      "format": "\u001b[38;2;92;92;88m└──────────────────────────────────────────────────────────────\u001b[0m"
     },
     "break",
     {
       "type": "custom",
-      "format": "\u001b[38;2;166;227;161m╒════════════════════════ 󰢮 Hardware ════════════════════════╕\u001b[0m"
+      "format": "\u001b[38;2;92;92;88m┌─ \u001b[38;2;216;119;86m[ HARDWARE ] \u001b[38;2;92;92;88m───────────────────────────────────────────────\u001b[0m"
     },
     {
       "type": "cpu",
-      "key": "   CPU",
-      "keyColor": "#c9745c",
-      "format": "{1} @ {7} - {8}",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m CPU:       ",
+      "keyColor": "#d9b36a",
+      "format": "{1} - {8}",
       "temp": true
     },
     {
       "type": "gpu",
-      "key": "  󰢮 GPU",
-      "keyColor": "#c9745c"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m GPU:       ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "display",
-      "key": "  󰍹 Screen",
-      "keyColor": "#a6e3a1"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m SCREEN:    ",
+      "keyColor": "#d9b36a"
     },
     {
       "type": "memory",
-      "key": "  󰍛 Memory",
-      "keyColor": "#e3c078"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m MEMORY:    ",
+      "keyColor": "#d9b36a"
     },
-    // system disk
     {
       "type": "disk",
-      "folders": "/", 
-      "key": "   Fedora",
-      "keyColor": "#59c2a5"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m FEDORA:    ",
+      "keyColor": "#d9b36a",
+      "folders": "/"
     },
-    
-    // ntfs data partition
     {
       "type": "disk",
-      "folders": "/run/media/anaidyss/805C94315C942446",
-      "key": "   Windows",
-      "keyColor": "#5f9790"
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m WINDOWS:   ",
+      "keyColor": "#d9b36a",
+      "folders": "/run/media/anaidyss/805C94315C942446"
     },
     {
       "type": "battery",
-      "key": "  󰂀 Battery",
-      "keyColor": "#a6e3a1",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m BATTERY:   ",
+      "keyColor": "#d9b36a",
       "temp": false
     },
     {
       "type": "localip",
-      "key": "  󰩟 Local IP",
-      "keyColor": "#a6e3a1",
+      "key": "\u001b[38;2;92;92;88m│\u001b[38;2;217;179;106m LOCAL_IP:  ",
+      "keyColor": "#d9b36a",
       "showIpv6": false
     },
     {
       "type": "custom",
-      "format": "\u001b[38;2;166;227;161m╘════════════════════════════════════════════════════════════╛\u001b[0m"
+      "format": "\u001b[38;2;92;92;88m└──────────────────────────────────────────────────────────────\u001b[0m"
     },
     "break",
     {
-      "type": "colors",
-      "symbol": "circle"
+      "type": "custom",
+      "format": "\u001b[38;2;92;92;88m███ \u001b[38;2;154;154;152m███ \u001b[38;2;216;119;86m███ \u001b[38;2;217;179;106m███ \u001b[38;2;229;83;75m███ \u001b[38;2;111;152;204m███\u001b[0m"
     }
   ]
 }

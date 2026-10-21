@@ -27,7 +27,11 @@ files() {
         ! -name "$(basename "$LINK")" -printf '%f\n' | sort
 }
 
-current() { basename "$(readlink -f "$LINK" 2>/dev/null || true)"; }
+STATE="$HOME/.config/theme/wallpaper"
+current() {
+    if [[ -r "$STATE" ]]; then basename "$(<"$STATE")"
+    else basename "$(readlink -f "$LINK" 2>/dev/null || true)"; fi
+}
 
 apply() {
     local f="$1"
@@ -38,9 +42,8 @@ apply() {
     fi
     [[ "$f" = /* ]] || f="$DIR/$f"
     [[ -f "$f" ]] || die "not found: $1"
-    ln -sfn "$f" "$LINK"
-    pkill -x swaybg 2>/dev/null || true
-    nohup swaybg -i "$LINK" -m "$MODE" >/dev/null 2>&1 &
+    # the theme sets the original (forest) or a tinted copy and restarts swaybg
+    theme wallpaper "$f"
     echo "set: $(basename "$f")"
 }
 

@@ -2,37 +2,39 @@
     "layer": "top",
     "position": "top",
     "height": 40,
-    "margin-top": 12,
-    "margin-left": 12,
-    "margin-right": 12,
-    "spacing": 10,
+    "margin-top": 6,
+    "margin-left": 6,
+    "margin-right": 6,
+    "spacing": 0,
     "expand-center": true,
     "fixed-center": false,
 
     "modules-left": [
         "custom/power",
-        "niri/workspaces",
+        "custom/workspaces",
         "custom/powermode",
         "custom/lid",
         "custom/music",
         "custom/music-toggle",
-        "clock"
+        "clock",
+        "custom/calendar"
     ],
     "modules-center": [
-        "custom/pong",
-        "custom/sysmon"
+        "custom/center"
     ],
     "modules-right": [
-        "network#wifi",
+        "custom/wifi",
+        "custom/bluetooth",
         "pulseaudio",
         "niri/language",
         "temperature",
         "battery"
     ],
 
-    "niri/workspaces": {
-        "format": "{index}",
-        "on-click": "activate"
+    "custom/workspaces": {
+        "exec": "/home/anaidyss/.config/waybar/niri-workspaces",
+        "return-type": "json",
+        "tooltip": true
     },
 
     "niri/language": {
@@ -43,8 +45,16 @@
 
     "clock": {
         "interval": 1,
-        "format": " {:%H:%M}",
+        "format": "[ {:%H:%M} ]",
         "tooltip-format": "<big>{0:%A, %d.%m.%Y}</big>\n<big>{0:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "custom/calendar": {
+        "format": "",
+        "tooltip-format": "LMB: calendar · RMB: accounts (Google)",
+        "tooltip": true,
+        "on-click": "pgrep -x gnome-calendar >/dev/null && pkill -x gnome-calendar || gnome-calendar",
+        "on-click-right": "env XDG_CURRENT_DESKTOP=GNOME gnome-control-center online-accounts"
     },
 
     "cpu": {
@@ -55,17 +65,28 @@
     "temperature": {
         "thermal-zone": 13,
         "critical-threshold": 80,
+        "on-click": "/home/anaidyss/.local/bin/veil-sys",
         "format": " {temperatureC}°C",
         "format-critical": " {temperatureC}°C"
     },
 
-    "network#wifi": {
-        "format-wifi": " {essid} ({signalStrength}%)",
-        "format-ethernet": "󰈀 Wired",
-        "format-linked": "󰈀 {ifname} (No IP)",
-        "format-disconnected": "󰤭 Offline",
-        "tooltip-format": "{ifname} via {gwaddr} 󰊗",
-        "on-click": "/home/anaidyss/.local/bin/wifi-menu"
+    "custom/wifi": {
+        "exec": "/home/anaidyss/.config/waybar/wifi.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "/home/anaidyss/.local/bin/veil-wifi"
+    },
+
+    "custom/bluetooth": {
+        "exec": "/home/anaidyss/.config/waybar/bluetooth.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "/home/anaidyss/.local/bin/veil-bt",
+        "on-click-right": "kitty --title Bluetooth bluetuith"
     },
 
     "pulseaudio": {
@@ -78,7 +99,8 @@
             "default": ["", "", ""]
         },
         "scroll-step": 3,
-        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-click-right": "/home/anaidyss/.local/bin/veil-audio"
     },
 
     "custom/music": {
@@ -119,20 +141,13 @@
 
     "custom/power": {
         "format": "⏻",
-        "tooltip": "ЛКМ: V.E.I.L. · ПКМ: Forest (hyprlock)",
+        "tooltip": "LMB: V.E.I.L. · RMB: Forest (hyprlock)",
         "on-click": "/home/anaidyss/.local/bin/veil-lock",
-        "on-click-right": "/home/anaidyss/.config/niri/lock.sh"
+        "on-click-right": "/home/anaidyss/.config/niri/lock.sh",
+        "on-click-middle": "/home/anaidyss/.local/bin/veil-power"
     },
-    "custom/pong": {
-        "exec": "/home/anaidyss/.config/waybar/pong.sh 70",
-        "return-type": "json",
-        "escape": false,
-        "expand": true,
-        "tooltip": false,
-        "on-click": "/home/anaidyss/.config/waybar/center-toggle.sh"
-    },
-    "custom/sysmon": {
-        "exec": "/home/anaidyss/.config/waybar/sysmon.sh",
+    "custom/center": {
+        "exec": "/home/anaidyss/.config/waybar/center.sh",
         "return-type": "json",
         "escape": false,
         "expand": true,
@@ -141,6 +156,7 @@
     },
     "battery": {
         "interval": 15,
+        "on-click": "/home/anaidyss/.local/bin/veil-sys",
         "states": {
             "warning": 30,
             "critical": 15

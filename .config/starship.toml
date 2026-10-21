@@ -6,36 +6,40 @@ $git_status\
 $line_break\
 $character"""
 
+right_format = "$time"
+
 add_newline = false
 
 [directory]
-# yellow pill with the folder
-style = "bg:yellow fg:black bold"
-format = '[](fg:yellow)[  $path ]($style)[](fg:yellow) '
+style = "bold fg:#d87756"
+format = '[┌─ \[ ](fg:#5c5c58)[$path]($style)[ \]](fg:#5c5c58)'
 truncation_length = 3
 truncation_symbol = "…/"
 home_symbol = "~"
 
 [git_branch]
-# branch as a pill too, amber
-style = "bg:bright-yellow fg:black bold"
-format = '[](fg:bright-yellow)[  $branch ]($style)[](fg:bright-yellow) '
+style = "fg:#d9b36a"
+format = '[─ \[ ](fg:#5c5c58)[$branch]($style)[ \]](fg:#5c5c58)'
 
 [git_status]
-# status as icons, no background
-style = "fg:bright-yellow bold"
-format = '[$all_status$ahead_behind]($style) '
-conflicted = " "
-ahead = "⇡${count} "
-behind = "⇣${count} "
-diverged = "⇕ "
-untracked = " "
-modified = " "
-staged = " "
-renamed = " "
-deleted = " "
+style = "fg:#73736f"
+format = '[ $all_status$ahead_behind]($style)'
+conflicted = "!"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕"
+untracked = "?"
+modified = "*"
+staged = "+"
+renamed = "»"
+deleted = "x"
 
 [character]
-# the arrow turns red if the command failed
-success_symbol = "[❯](bold yellow) "
-error_symbol = "[❯](bold red) "
+success_symbol = "[└─❯](bold fg:#d87756) "
+error_symbol = "[└─❯](bold fg:#e5534b) "
+
+[time]
+disabled = false
+time_format = "%T"
+style = "fg:#73736f"
+format = '[$time]($style)'
