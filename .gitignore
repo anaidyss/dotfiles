@@ -4,3 +4,4 @@ __pycache__/
 .config/fish/fish_variables
 .config/fish/completions/
 .config/secrets/
+.config/theme/vscode/

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# VSCodium (official tarball in ~/.local/opt/vscodium), native wayland
+exec "$HOME/.local/opt/vscodium/bin/codium" --ozone-platform=wayland "$@"

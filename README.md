@@ -23,6 +23,9 @@ switch with `theme toggle`.
   lazygit + diffview, flash/surround, trouble, todo-comments, spectre,
   persistence + undotree, toggleterm, ufo folding, markdown preview,
   statuscol gutter + barbecue winbar, mini.animate/indentscope/cursorword
+- **vscodium**: installed without root by `install-codium.sh` (official tarball, sha256
+  checked); the "Veil" color themes (graphite + forest) are generated from the
+  palette and follow `theme toggle`
 - **themes**: `theme` switcher + `palette.toml` (every color is a role with a
   forest and a graphite value), see below
 - **menus**: veil-power / veil-sys / veil-wifi / veil-bt / veil-audio — gtk4 popups
@@ -75,7 +78,8 @@ font everywhere: JetBrainsMono Nerd Font, lives in ~/.local/share/fonts.
   fuzzel/     launcher
   hypr/       hyprlock fallback
   fastfetch/  system info (+ fedora logo tile)
-  theme/      palette.toml, slots/ (per-theme files), tools/, telegram theme
+  theme/      palette.toml, slots/ (per-theme files), tools/ (logo + vscode theme generators), telegram theme
+  VSCodium/   user settings (font, shape, default theme)
   gtk-3.0/ gtk-4.0/   titlebar css + shared veil layer
   btop/ bat/ yazi/ mako/ swayosd/   the rest, both themes
 .local/bin/   theme, ff-box, veil-power/sys/wifi/bt/audio, wallpaper,
@@ -84,6 +88,7 @@ font everywhere: JetBrainsMono Nerd Font, lives in ~/.local/share/fonts.
 .local/share/ color-schemes (kde)
 .peaclock/    peaclock config
 install.sh    copies everything into place
+install-codium.sh   optional: vscodium from the official tarball + veil theme
 ```
 
 ## custom bits
