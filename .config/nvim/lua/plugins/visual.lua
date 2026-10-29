@@ -18,8 +18,8 @@ return {
         },
       })
       -- subtle gutter background to frame the code
-      vim.api.nvim_set_hl(0, "StatusColumn", { bg = "#0f1512" })
-      vim.api.nvim_set_hl(0, "LineNr", { fg = "#4f6157" })
+      vim.api.nvim_set_hl(0, "StatusColumn", { bg = "#1a1b19" })
+      vim.api.nvim_set_hl(0, "LineNr", { fg = "#5c5c58" })
     end,
   },
 

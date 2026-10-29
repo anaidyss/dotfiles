@@ -91,7 +91,7 @@
       "key": "  󰍛 Memory",
       "keyColor": "#e3c078"
     },
-    // system disk
+    // системный диск
     {
       "type": "disk",
       "folders": "/", 
@@ -99,7 +99,7 @@
       "keyColor": "#59c2a5"
     },
     
-    // ntfs data partition
+    // ntfs-раздел с данными
     {
       "type": "disk",
       "folders": "/run/media/anaidyss/805C94315C942446",

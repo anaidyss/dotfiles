@@ -42,7 +42,7 @@ apply() {
     fi
     [[ "$f" = /* ]] || f="$DIR/$f"
     [[ -f "$f" ]] || die "not found: $1"
-    # the theme sets the original (forest) or a tinted copy and restarts swaybg
+    # тема сама ставит оригинал (forest) или тонированную копию и перезапускает swaybg
     theme wallpaper "$f"
     echo "set: $(basename "$f")"
 }

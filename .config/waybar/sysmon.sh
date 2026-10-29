@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
-# Retro telemetry for waybar: CPU / memory / direct / vpn / ping+node.
-# Shows data only when the mode is sysmon (otherwise prints an empty line).
-# Block bars ▁▂▃▄▅▆▇█ with a heat map by load level.
+# Retro-телеметрия для waybar: CPU / память / direct / vpn / пинг+нода.
+# Показывает данные только когда режим = sysmon (иначе выводит пустую строку).
+# Блок-бары ▁▂▃▄▅▆▇█ с термокартой по уровню нагрузки.
 
 MODE_FILE="$HOME/.cache/waybar-center"
-SPARK=8               # points in one sparkline
-POLL=0.2              # mode polling step (s)
+SPARK=8               # точек в одном спарклайне
+POLL=0.2              # шаг опроса режима (с)
 VPN_STATE=/run/vpnstat/state
 PING_TARGET=http://1.1.1.1/
 NODE_API=http://127.0.0.1:9090/proxies/proxy
 
-c_lbl='#e8c987'      # label icons
-c_val='#d5d5d3'      # numbers
-C_LOW='#73736f'      # heat map: low load
-C_MID='#d87756'      # medium / green / reality / ping ok
-C_HIGH='#e8c987'     # high / amber / hysteria2 / ping elevated
-C_CRIT='#e5534b'     # critical / red / ping bad
+c_lbl='#e8c987'      # иконки подписей
+c_val='#d5d5d3'      # числа
+C_LOW='#73736f'      # термокарта: низкая нагрузка
+C_MID='#d87756'      # средняя / зелёный / reality / пинг ок
+C_HIGH='#e8c987'     # высокая / янтарный / hysteria2 / пинг повышен
+C_CRIT='#e5534b'     # критичная / красный / пинг плохой
 
 ICON_CPU=$'\uf4bc'
 ICON_MEM=$'\ue266'
@@ -23,10 +23,10 @@ ICON_DIR=$'\uf0ac'
 ICON_VPN=$'\U000f0582'
 ICON_PING=$'\U000f029a'
 
-# 8-level block bar, filled bottom to top (0..7)
+# 8-уровневый блок-бар, заполнение снизу вверх (0..7)
 levels=($'\u2581' $'\u2582' $'\u2583' $'\u2584' $'\u2585' $'\u2586' $'\u2587' $'\u2588')
 
-NET_FLOOR=51200        # below 50 KiB/s the scale counts as empty
+NET_FLOOR=51200        # ниже 50 KiB/s шкала считается пустой
 
 mode() { cat "$MODE_FILE" 2>/dev/null || echo sysmon; }
 
@@ -74,7 +74,7 @@ spark() {
     echo "$out"
 }
 
-# short label of the active node
+# сокращённая подпись активной ноды
 node_label() {
     case "$1" in
         aws-h2)      echo "AWS·h2" ;;
@@ -108,7 +108,7 @@ for (( i = 0; i < SPARK; i++ )); do
     hist_cpu+=(0); hist_mem+=(0); hist_direct+=(0); hist_vpn+=(0)
 done
 
-# prime
+# прайм
 cpu_prev=($(read_cpu))
 st_prev=($(cat "$VPN_STATE" 2>/dev/null || printf '0 0 0 0'))
 [ ${#st_prev[@]} -lt 4 ] && st_prev=(0 0 0 0)
@@ -136,13 +136,13 @@ while true; do
 
     tick=$((tick + 1))
 
-    # --- ping (TCP handshake through VPN, every 5 ticks) ---
+    # --- пинг (TCP-handshake через VPN, каждые 5 тиков) ---
     if (( tick % 5 == 0 )); then
         t=$(curl -s -o /dev/null -w '%{time_connect}' --max-time 3 "$PING_TARGET" 2>/dev/null)
         if [ -n "$t" ]; then ping_ms=$(awk -v t="$t" 'BEGIN{printf "%d", t*1000}'); fi
     fi
 
-    # --- active node (every 3 ticks) ---
+    # --- активная нода (каждые 3 тика) ---
     if (( tick % 3 == 0 )); then
         n=$(curl -sf --max-time 2 "$NODE_API" 2>/dev/null | jq -r '.now // empty' 2>/dev/null)
         [ -n "$n" ] && node="$n"
@@ -155,7 +155,7 @@ while true; do
     (( dt > 0 )) && cpu_pct=$(( (dt - di) * 100 / dt ))
     cpu_prev=("${cpu_now[@]}")
 
-    # --- memory ---
+    # --- память ---
     mem=($(read_mem))
     mem_pct=0
     (( mem[0] > 0 )) && mem_pct=$(( (mem[0] - mem[1]) * 100 / mem[0] ))
@@ -183,7 +183,7 @@ while true; do
     for v in "${hist_direct[@]}"; do (( v > scale_direct )) && scale_direct=$v; done
     for v in "${hist_vpn[@]}";    do (( v > scale_vpn ))    && scale_vpn=$v;   done
 
-    # --- status labels/colors ---
+    # --- подписи/цвета статуса ---
     if [ -n "$node" ]; then
         lbl=$(node_label "$node"); ncol=$(node_color "$node")
     else

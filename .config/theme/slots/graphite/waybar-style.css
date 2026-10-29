@@ -7,14 +7,14 @@
     min-height: 0;
 }
 
-/* Single opaque bar */
+/* Единая непрозрачная панель */
 window#waybar {
     background-color: #1e1f1c;
     border: 1px solid #5c5c58;
     border-radius: 0;
 }
 
-/* All modules — transparent blocks inside the bar */
+/* Все модули — прозрачные блоки внутри панели */
 #custom-workspaces,
 #language,
 #custom-weather,
@@ -30,6 +30,7 @@ window#waybar {
 #custom-lid,
 #custom-music,
 #custom-music-toggle,
+#custom-calendar,
 #custom-wifi,
 #custom-bluetooth {
     background-color: transparent;
@@ -39,7 +40,7 @@ window#waybar {
     border-left: 1px solid #3c3c3a;
 }
 
-/* Workspaces (custom niri-workspaces-rs module) */
+/* Воркспейсы (кастомный модуль niri-workspaces-rs) */
 #custom-workspaces {
     padding: 0 6px;
     background: transparent;
@@ -47,7 +48,7 @@ window#waybar {
     border-radius: 0;
 }
 
-/* Accent 1 — green: "system life" */
+/* Акцент 1 — зелёный: «жизнь системы» */
 #temperature {
     color: #b5b5b2;
 }
@@ -79,7 +80,7 @@ window#waybar {
     font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Symbols 2", monospace;
 }
 
-/* Accent 2 — amber: "info/network" */
+/* Акцент 2 — янтарный: «информация/сеть» */
 #clock {
     color: #1e1f1c;
     font-weight: 700;
@@ -118,7 +119,33 @@ window#waybar {
     color: #b5b5b2;
 }
 
-/* Muted states */
+/* Кнопка-календарь: квадратный «листок» с цветной шапкой */
+#custom-calendar {
+    min-width: 30px;
+    margin: 4px 8px 4px 6px;
+    padding: 0;
+    color: #d5d5d3;
+    font-weight: 700;
+    background: #262723;
+    border: 1px solid #c07a58;
+    border-top: 5px solid #c07a58;
+}
+
+#custom-calendar.weekend {
+    border-color: #e5534b;
+    border-top-color: #e5534b;
+}
+
+#custom-calendar:hover {
+    color: #1e1f1c;
+    background: #c07a58;
+}
+
+#custom-calendar.weekend:hover {
+    background: #e5534b;
+}
+
+/* Приглушённые состояния */
 #pulseaudio.muted {
     color: #73736f;
 }
@@ -150,7 +177,7 @@ window#waybar {
     background: #e5534b;
 }
 
-/* Status (signal) colors — alert states only */
+/* Статусные (сигнальные) цвета — только для тревожных состояний */
 #temperature.critical {
     color: #e5534b;
 }

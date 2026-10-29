@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""veil-sys — system telemetry in the veilkit design system: [ SYS_TELEMETRY ]. Data from /proc and /sys."""
+"""veil-sys — телеметрия системы в дизайн-системе veilkit: [ SYS_TELEMETRY ]. Данные из /proc и /sys."""
 import os
 import sys
 import time
@@ -80,14 +80,14 @@ def build(win):
             used = mi["MemTotal"] - mi["MemAvailable"]
             rows["ram"].set_markup(f"{vk.meter(used / mi['MemTotal'])}  {vk.esc(human(used))} / {vk.esc(human(mi['MemTotal']))}")
         except (OSError, KeyError, ValueError):
-            problems.append("RAM: no data from /proc/meminfo")
+            problems.append("RAM: нет данных /proc/meminfo")
         try:
             temp = int(rd(THERMAL)) / 1000
             col = vk.C["danger"] if temp >= 80 else vk.C["accent2"]
             rows["temp"].set_markup(vk.span(f"{temp:.0f}°C", col))
         except (OSError, ValueError):
             rows["temp"].set_markup(vk.span("N/A", vk.C["dim"]))
-            problems.append(f"TEMP: no {THERMAL}")
+            problems.append(f"TEMP: нет {THERMAL}")
         rows["load"].set_label(" ".join(rd("/proc/loadavg").split()[:3]))
         rows["net"].set_markup(f"{vk.span('RX', vk.C['dim'])} {vk.esc(human(s['rx']))}/s   {vk.span('TX', vk.C['dim'])} {vk.esc(human(s['tx']))}/s")
         try:

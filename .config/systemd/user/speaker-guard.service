@@ -1,0 +1,11 @@
+[Unit]
+Description=Hard-mute laptop speakers, headphones only (waybar toggle)
+
+[Service]
+Type=simple
+ExecStart=%h/.config/waybar/speaker_guard.sh watch
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target

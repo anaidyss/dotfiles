@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Cycles the central waybar widget.
-modes=(sysmon chase match snake satellite spring)
+# Переключает центральный виджет waybar по кругу.
+modes=(sysmon chase match snake runner shooter)
 
 f="$HOME/.cache/waybar-center"
 mkdir -p "$(dirname "$f")"

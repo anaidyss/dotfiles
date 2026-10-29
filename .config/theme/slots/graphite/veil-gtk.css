@@ -1,5 +1,5 @@
-/* Veil Graphite — shared GTK3/GTK4 styling layer (libadwaita/adw-gtk3): monolith, square corners, flat surfaces.
-   Colors are graphite palette roles; this file is a theme slot (theme/slots/graphite/veil-gtk.css). */
+/* Veil Graphite — общий слой оформления GTK3/GTK4 (libadwaita/adw-gtk3): монолит, прямые углы, плоские поверхности.
+   Цвета — роли палитры graphite; файл — слот темы (theme/slots/graphite/veil-gtk.css). */
 @define-color window_bg_color #1e1f1c;
 @define-color window_fg_color #d5d5d3;
 @define-color view_bg_color #1a1b19;

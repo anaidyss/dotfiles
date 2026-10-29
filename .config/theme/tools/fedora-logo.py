@@ -1,4 +1,4 @@
-# Fedora logo generator for fastfetch: python3 fedora-logo.py <N>  ->  logo<N>.txt (copy to ~/.config/fastfetch/fedora-veil.txt)
+# Генератор лого Fedora для fastfetch: python3 fedora-logo.py <N>  ->  logo<N>.txt (скопировать в ~/.config/fastfetch/fedora-veil.txt)
 import sys
 from PIL import Image, ImageDraw
 N=int(sys.argv[1]); S=24; G=24
@@ -6,22 +6,22 @@ img=Image.new("L",(N*S,N*S),0); d=ImageDraw.Draw(img)
 k=N*S/G; c=N*S/2
 def circ(r,fill): d.ellipse([c-r*k,c-r*k,c+r*k,c+r*k],fill=fill)
 def rect(x0,y0,x1,y1): d.rectangle([x0*k,y0*k,x1*k,y1*k],fill=255)
-circ(11.7,255); circ(8.5,0)                      # ring
-# f: stem
+circ(11.7,255); circ(8.5,0)                      # кольцо
+# f: ствол
 rect(10.6,8.0,13.2,17.6)
-# hook: arc from the top of the stem to the right and down
+# крюк: дуга от верха ствола вправо и вниз
 d.arc([10.6*k,5.4*k,16.8*k,11.6*k],180,350,fill=255,width=int(2.5*k))
-# crossbar
+# перекладина
 rect(7.8,11.4,15.8,13.8)
-# tail loop: goes left-down into the ring
+# хвост-петля: уходит влево-вниз в кольцо
 d.line([(11.9*k,17.0*k),(6.0*k,19.4*k)],fill=255,width=int(2.8*k))
 d.pieslice([c-13*k,c-13*k,c+13*k,c+13*k],125,150,fill=0)
 d.line([(11.9*k,17.0*k),(6.0*k,19.4*k)],fill=255,width=int(2.8*k))
 small=img.resize((N,N),Image.BOX)
 fill=[[1 if small.getpixel((x,y))>115 else 0 for x in range(N)] for y in range(N)]
 def f(x,y): return fill[y][x] if 0<=x<N and 0<=y<N else 0
-# shadow: only right/bottom of the OUTER logo outline (+1,+1), nothing drawn inside
-def inside(x,y):                        # inside the outer circle
+# тень: только справа/снизу ОТ ВНЕШНЕГО контура логотипа (+1,+1), внутри не рисуем
+def inside(x,y):                        # внутри внешнего круга
     return (x+0.5-N/2)**2+(y+0.5-N/2)**2 <= (11.7*N/G)**2
 shadow=lambda x,y: (not f(x,y)) and f(x-1,y-1) and not inside(x,y)
 rows=[]

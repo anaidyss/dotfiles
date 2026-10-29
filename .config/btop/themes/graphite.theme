@@ -1,5 +1,5 @@
-# Graphite theme — clay #d87756 / amber #e8a838 / gold #e8c987
-# Base: dark #1e1f1c, errors: red #e5534b
+# Graphite theme — зелёный #d87756 / бирюзовый #e8a838 / янтарный #e8c987
+# База: тёмный лесной #1e1f1c, ошибки: терракота #e5534b
 
 theme[main_bg]="#1e1f1c"
 theme[main_fg]="#d5d5d3"

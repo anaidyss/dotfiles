@@ -1,22 +1,63 @@
-"""veilkit — shared popup design system (GTK4 + gtk4-layer-shell).
+"""veilkit — общая дизайн-система попапов (GTK4 + gtk4-layer-shell).
 
-Colors are roles from ~/.config/theme/palette.toml for the current theme, shape comes from [tokens.<theme>].
-Components: Panel ([ TITLE ] in the top border), Row (LABEL: value), Meter ([|||||.....]),
-ActionButton (with confirmation for dangerous actions), ErrorLine. Popup = layer-shell window + transparent
-backdrop: a click outside or Esc closes it, running it again toggles.
-No external processes: the menus read data from /proc and /sys themselves.
+Цвета — роли из ~/.config/theme/palette.toml для текущей темы, форма — [tokens.<тема>].
+Компоненты: Panel ([ ЗАГОЛОВОК ] в верхней рамке), Row (ПОДПИСЬ: значение), Meter ([|||||.....]),
+ActionButton (с подтверждением для опасного), ErrorLine. Попап = layer-shell окно + прозрачная
+подложка: клик мимо или Esc закрывают, повторный запуск — переключает.
+Без внешних процессов: данные читают сами меню из /proc и /sys.
 """
+import atexit
 import os
+import signal
 import sys
-import tomllib
 
-# gtk4-layer-shell must be loaded before libwayland-client: re-exec with LD_PRELOAD
+# Повторный запуск закрывает открытое меню. Делается через pid-файл и SIGUSR1 ещё до импорта GTK:
+# регистрация Gtk.Application с application_id на D-Bus стоила ~400 мс на каждое открытие.
+_NAME = os.path.basename(sys.argv[0])
+_PIDFILE = os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), f"veil-menu-{_NAME}.pid")
+
+
+def _signal_running() -> bool:
+    try:
+        pid = int(open(_PIDFILE).read())
+        if pid != os.getpid() and _NAME.encode() in open(f"/proc/{pid}/cmdline", "rb").read():
+            os.kill(pid, signal.SIGUSR1)
+            return True
+    except (OSError, ValueError):
+        pass
+    return False
+
+
+# gtk4-layer-shell обязан быть загружен раньше libwayland-client: перезапускаемся с LD_PRELOAD
 _LS_LIB = "/usr/lib64/libgtk4-layer-shell.so.0"
-if os.path.exists(_LS_LIB) and "gtk4-layer-shell" not in os.environ.get("LD_PRELOAD", ""):
-    os.environ["LD_PRELOAD"] = (_LS_LIB + ":" + os.environ.get("LD_PRELOAD", "")).rstrip(":")
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+if "VEIL_CHECKED" not in os.environ:
+    if _signal_running():
+        sys.exit(0)
+    with open(_PIDFILE, "w") as _f:
+        _f.write(str(os.getpid()))
+    os.environ["VEIL_CHECKED"] = "1"
+    if os.path.exists(_LS_LIB) and "gtk4-layer-shell" not in os.environ.get("LD_PRELOAD", ""):
+        os.environ["LD_PRELOAD"] = (_LS_LIB + ":" + os.environ.get("LD_PRELOAD", "")).rstrip(":")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+os.environ.pop("VEIL_CHECKED", None)
 
-import gi
+
+def _drop_pidfile():
+    try:
+        if int(open(_PIDFILE).read()) == os.getpid():
+            os.unlink(_PIDFILE)
+    except (OSError, ValueError):
+        pass
+
+
+atexit.register(_drop_pidfile)
+
+# программный рендерер: старт GL-контекста добавлял ~100 мс до первого кадра, а окна маленькие
+os.environ.setdefault("GSK_RENDERER", "cairo")
+
+import tomllib  # noqa: E402
+
+import gi  # noqa: E402
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gdk", "4.0")
@@ -95,9 +136,9 @@ def span(text, color=None, bold=False) -> str:
     return f"<span{a}>{esc(text)}</span>"
 
 
-# ---------------------------------------------------------------- components
+# ---------------------------------------------------------------- компоненты
 def Panel(title: str, *children: Gtk.Widget) -> Gtk.Overlay:
-    """Frame with a [ TITLE ] cut into the top line."""
+    """Рамка с заголовком [ TITLE ], врезанным в верхнюю линию."""
     box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=T["gap"])
     box.add_css_class("panel")
     box.set_margin_top(10)
@@ -127,7 +168,7 @@ def Row(key: str, value: str = "", css_class: str = "") -> tuple[Gtk.Box, Gtk.La
 
 
 def meter(frac: float, width: int = 14) -> str:
-    """Text meter in the Veil style: [|||||.......] — color fill, red when overloaded."""
+    """Текстовая шкала в духе Veil: [|||||.......] — заполнение цветом, красным при перегрузе."""
     frac = max(0.0, min(1.0, frac))
     n = round(frac * width)
     col = C["danger"] if frac > 0.85 else C["accent"]
@@ -152,7 +193,7 @@ def show_error(lab: Gtk.Label, text: str):
 
 
 def ActionButton(hint: str, name: str, on_activate, danger: bool = False) -> Gtk.Button:
-    """Button [ L ] LOCK. danger=True — two-step confirmation (like ConfirmButton in AGS)."""
+    """Кнопка [ L ] LOCK. danger=True — двухшаговое подтверждение (как ConfirmButton в AGS)."""
     btn = Gtk.Button()
     btn.add_css_class("vbtn")
     if danger:
@@ -193,7 +234,7 @@ def Section(text: str) -> Gtk.Label:
 
 
 def Toggle(name: str, on: bool, on_toggle) -> Gtk.Button:
-    """[ NAME: ON ] / [ NAME: OFF ]; on_toggle(new_value)."""
+    """[ NAME: ON ] / [ NAME: OFF ]; on_toggle(новое_значение)."""
     btn = Gtk.Button()
     btn.add_css_class("vbtn")
     lab = Gtk.Label(xalign=0, use_markup=True)
@@ -219,8 +260,27 @@ def ListButton(markup: str, on_click, current: bool = False, ellipsize: int = 3)
     lab = Gtk.Label(xalign=0, use_markup=True, ellipsize=ellipsize, hexpand=True)
     lab.set_markup(markup)
     btn.set_child(lab)
-    btn.connect("clicked", lambda _b: on_click())
+    btn.veil_click, btn.veil_sig = on_click, (markup, bool(current))
+    btn.connect("clicked", lambda _b: btn.veil_click())
     return btn
+
+
+def fill(box: Gtk.Box, new: list) -> bool:
+    """Заменяет детей box на new; если все ListButton совпадают по виду — оставляет старые (без мигания и потери hover),
+    только обновляя их обработчики клика."""
+    old, ch = [], box.get_first_child()
+    while ch:
+        old.append(ch)
+        ch = ch.get_next_sibling()
+    if len(old) == len(new) and all(getattr(o, "veil_sig", None) is not None and o.veil_sig == getattr(n, "veil_sig", 0)
+                                    for o, n in zip(old, new)):
+        for o, n in zip(old, new):
+            o.veil_click = n.veil_click
+        return False
+    clear(box)
+    for w in new:
+        box.append(w)
+    return True
 
 
 def Scroll(child: Gtk.Widget, max_h: int = 260) -> Gtk.ScrolledWindow:
@@ -254,7 +314,7 @@ def debounce(ms: int, fn):
 
 
 def run_async(argv: list[str], cb=None):
-    """Fixed argv, stdout -> cb(str|None)."""
+    """Фиксированный argv, stdout -> cb(str|None)."""
     try:
         p = Gio.Subprocess.new(argv, Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_SILENCE)
     except GLib.Error:
@@ -272,36 +332,111 @@ def run_async(argv: list[str], cb=None):
     p.communicate_utf8_async(None, None, done)
 
 
+SLIDE_PX = 10
+
+
+def _slide(win, off: float):
+    """Смещение окна вверх от своего места в px (0 — на месте)."""
+    top = getattr(win, "veil_top", None)
+    if top is not None:
+        win.veil_off = off
+        LS.set_margin(win, LS.Edge.TOP, top - round(off))
+
+
+def _fade(win, start: float, end: float, ms: int, done=None, slide=None):
+    """Анимация прозрачности (и, если slide=(от, до), смещения вверх в px) с замедлением к концу."""
+    if getattr(win, "veil_tick", None):
+        win.remove_tick_callback(win.veil_tick)
+        win.veil_tick = None
+    if not Gtk.Settings.get_default().props.gtk_enable_animations:
+        win.set_opacity(end)
+        if slide:
+            _slide(win, slide[1])
+        if done:
+            done()
+        return
+    t0 = []
+
+    def tick(w, _clock):
+        now = GLib.get_monotonic_time()
+        if not t0:
+            t0.append(now)
+        p = min(1.0, (now - t0[0]) / (ms * 1000))
+        e = 1 - (1 - p) ** 3
+        w.set_opacity(start + (end - start) * e)
+        if slide:
+            _slide(w, slide[0] + (slide[1] - slide[0]) * e)
+        if p >= 1.0:
+            w.veil_tick = None
+            if done:
+                done()
+            return GLib.SOURCE_REMOVE
+        return GLib.SOURCE_CONTINUE
+    win.veil_tick = win.add_tick_callback(tick)
+
+
+def reveal(win):
+    """Плавно показывает окно (один раз). Окно создаётся прозрачным, чтобы не было видно скачка размера при загрузке данных."""
+    if not getattr(win, "veil_revealed", True):
+        win.veil_revealed = True
+        _fade(win, 0.0, 1.0, 140, slide=(SLIDE_PX, 0))
+
+
 def refit(win):
-    """GTK4 doesn't shrink the window when the content gets smaller: force a size recompute."""
-    w = getattr(win, "veil_width", 380)
-    win.set_default_size(w, 1)
-    GLib.idle_add(lambda: (win.set_default_size(w, -1), False)[1])
+    """GTK4 не сжимает окно, когда содержимое стало меньше: выставляем высоту явно, одним шагом и только если она изменилась."""
+    if getattr(win, "veil_fit_pending", False):
+        return
+    win.veil_fit_pending = True
+
+    def apply():
+        win.veil_fit_pending = False
+        w = getattr(win, "veil_width", 380)
+        child = win.get_child()
+        if child is not None:
+            w = max(w, child.measure(Gtk.Orientation.HORIZONTAL, -1)[0])
+            nat = child.measure(Gtk.Orientation.VERTICAL, w)[1]
+            if nat != getattr(win, "veil_h", None):
+                win.veil_h = nat
+                win.set_default_size(w, nat)
+        GLib.idle_add(lambda: (reveal(win), False)[1])
+        return False
+    GLib.idle_add(apply)
 
 
 def spawn(argv: list[str]):
-    """Fixed argv, no shell."""
+    """Фиксированный argv, без shell."""
     try:
         Gio.Subprocess.new(argv, Gio.SubprocessFlags.STDOUT_SILENCE | Gio.SubprocessFlags.STDERR_SILENCE)
     except GLib.Error as e:
         print("spawn failed:", argv, e)
 
 
-# ---------------------------------------------------------------- popup window
-def run_menu(app_id: str, build, *, width: int = 380, anchor: str = "top-right", keys=None):
-    """build(win) -> Gtk.Widget. anchor: 'top-right' | 'center'. Running it again closes the menu."""
-    app = Gtk.Application(application_id=app_id)
-    st = {"win": None, "back": None}
+# ---------------------------------------------------------------- окно-попап
+def run_menu(app_id: str, build, *, width: int = 380, anchor: str = "top-right", keys=None, wait_data: bool = False):
+    """build(win) -> Gtk.Widget. anchor: 'top-right' | 'center'. Повторный запуск закрывает меню (см. _signal_running).
+    wait_data=True — данные приходят асинхронно: окно остаётся прозрачным до первого refit() (или 120 мс).
+    app_id только для читаемости вызовов: Gtk.Application создаётся без id, чтобы не платить за регистрацию на D-Bus."""
+    app = Gtk.Application()
+    st = {"win": None, "back": None, "cancel": False}
 
     def close_all(*_):
-        for w in (st["win"], st["back"]):
-            if w:
-                w.destroy()
+        win, back = st["win"], st["back"]
         st["win"] = st["back"] = None
+        if back:
+            back.destroy()
+        if win:
+            _fade(win, win.get_opacity(), 0.0, 100, win.destroy, slide=(getattr(win, "veil_off", 0.0), SLIDE_PX))
 
-    def activate(a):
+    def on_toggle_signal():
         if st["win"]:
             close_all()
+        else:
+            st["cancel"] = True
+        return GLib.SOURCE_CONTINUE
+    GLib.unix_signal_add(GLib.PRIORITY_HIGH, signal.SIGUSR1, on_toggle_signal)
+
+    def activate(a):
+        if st["cancel"]:
             return
         prov = Gtk.CssProvider()
         prov.load_from_string(css())
@@ -355,8 +490,17 @@ def run_menu(app_id: str, build, *, width: int = 380, anchor: str = "top-right",
         kc.connect("key-pressed", on_key)
         win.add_controller(kc)
         st["win"], st["back"] = win, back
+        win.veil_revealed = False
+        win.set_opacity(0.0)
+        if anchor == "top-right":
+            win.veil_top = T["bar_offset"]
+            _slide(win, SLIDE_PX)
         back.present()
         win.present()
+        if wait_data:
+            GLib.timeout_add(120, lambda: (st["win"] is win and reveal(win), False)[1])
+        else:
+            GLib.idle_add(lambda: (st["win"] is win and reveal(win), False)[1])
 
     app.connect("activate", activate)
     app.run(None)

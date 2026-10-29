@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""System palette switcher: theme forest|graphite|toggle|status|audit|wallpaper <file>.
+"""Переключатель системных палитр: theme forest|graphite|toggle|status|audit|wallpaper <файл>.
 
-Palettes live in ~/.config/theme/palette.toml (role -> [forest, graphite]).
-Switching replaces colors directly in the configs (single pass, idempotent,
-manual edits outside the palette are left alone), then the programs are reloaded.
+Палитры лежат в ~/.config/theme/palette.toml (роль -> [forest, graphite]).
+Переключение — подмена цветов прямо в конфигах (один проход, идемпотентно,
+ручные правки вне палитры не трогаются), затем перезагрузка программ.
 """
 import glob
 import os
@@ -39,7 +39,7 @@ def load():
         for t, v in zip(themes, vals):
             v = v.lower().lstrip("#")
             if v in tables[t]:
-                sys.exit(f"palette: {t}: color #{v} defined twice ({tables[t][v]}, {role})")
+                sys.exit(f"palette: {t}: цвет #{v} задан дважды ({tables[t][v]}, {role})")
             tables[t][v] = role
     for a in themes:
         for b in themes:
@@ -48,24 +48,24 @@ def load():
             for hx, role in tables[a].items():
                 other = tables[b].get(hx)
                 if other and other != role:
-                    sys.exit(f"palette: #{hx} — {a}:{role} collides with {b}:{other}, reversibility broken")
+                    sys.exit(f"palette: #{hx} — {a}:{role} совпадает с {b}:{other}, обратимость сломана")
     allhex = set()
     for t in tables.values():
         allhex |= set(t)
     for fm in data["targets"].get("filemaps", []):
         fm["_map"] = {k.lower().lstrip("#"): v.lower().lstrip("#") for k, v in fm["map"].items()}
         if len(set(fm["_map"].values())) != len(fm["_map"]):
-            sys.exit(f"filemap {fm['file']}: values must be unique (otherwise not reversible)")
+            sys.exit(f"filemap {fm['file']}: значения должны быть уникальны (иначе необратимо)")
         for k, v in fm["_map"].items():
             if k not in tables[fm["theme"]]:
-                sys.exit(f"filemap {fm['file']}: #{k} is not in the palette {fm['theme']}")
+                sys.exit(f"filemap {fm['file']}: #{k} нет в палитре {fm['theme']}")
             if v in allhex:
-                sys.exit(f"filemap {fm['file']}: #{v} is already used by the palette, pick another shade")
+                sys.exit(f"filemap {fm['file']}: #{v} уже занят палитрой, выберите другой оттенок")
     return data, themes, roles, tables
 
 
 def mapping(themes, roles, target):
-    """hex (no #) of any other theme -> hex of the target theme."""
+    """hex (без #) любой другой темы -> hex целевой темы."""
     ti = themes.index(target)
     m = {}
     for vals in roles.values():
@@ -209,7 +209,7 @@ def current():
 
 
 def wallpaper_set(data, theme, original=None):
-    """symlink wallpaper.jpg -> original (forest) or the theme's tinted copy. True if the link changed."""
+    """symlink wallpaper.jpg -> оригинал (forest) или тонированная копия темы. True если ссылка изменилась."""
     wp = data["wallpaper"]
     link = Path.home() / wp["link"]
     state = CFG / "theme" / "wallpaper"
@@ -243,12 +243,12 @@ def wallpaper_set(data, theme, original=None):
 
 
 def swap_slots(data, prev, target):
-    """Files that differ structurally per theme: each theme has its own full file (slot).
-    On a theme change the live file is saved to the previous theme's slot (edits aren't lost)."""
+    """Файлы со структурными отличиями по темам: у каждой темы свой полный файл (слот).
+    При смене темы живой файл сохраняется в слот прежней темы (правки не теряются)."""
     changed = []
     for sw in data["targets"].get("swaps", []):
         live = Path.home() / sw["live"][2:] if sw["live"].startswith("~/") else CFG / sw["live"]
-        if not live.parent.is_dir():          # the app isn't installed on this machine — skip
+        if not live.parent.is_dir():          # приложения нет на этой машине — пропускаем
             continue
         tslot = CFG / sw[target] if target in sw else None
         already = tslot is not None and live.exists() and tslot.exists() and live.read_bytes() == tslot.read_bytes()
@@ -268,7 +268,7 @@ def swap_slots(data, prev, target):
 def apply(target):
     data, themes, roles, tables = load()
     if target not in themes:
-        sys.exit(f"no such theme: {target} (available: {', '.join(themes)})")
+        sys.exit(f"нет такой темы: {target} (есть: {', '.join(themes)})")
     m = mapping(themes, roles, target)
     files, bare = targets(data)
     changed = swap_slots(data, current(), target)
@@ -301,7 +301,7 @@ def apply(target):
     for g in data.get("gsettings", []):
         sh("gsettings", "set", g["schema"], g["key"], g[target])
 
-    # themes named in the file: the forest file is canonical, the rest are generated from it
+    # темы с именем в файле: канон — forest-файл, остальные генерируются из него
     base = themes[0]
     for v in data["targets"].get("variants", []):
         src = CFG / v["src"]
@@ -378,7 +378,7 @@ def audit():
             if mo.group(2).lower() not in known:
                 unknown.setdefault(mo.group(2).lower(), []).append(rel(p))
     if not unknown:
-        print("all colors in the target files are described in the palette")
+        print("все цвета в целевых файлах описаны в палитре")
     for h, ps in sorted(unknown.items()):
         print(f"#{h}  {', '.join(sorted({str(x) for x in ps}))[:140]}")
 
@@ -394,7 +394,7 @@ def main():
     data, themes, _, _ = load()
     if cmd == "wallpaper":
         if len(sys.argv) < 3:
-            sys.exit("theme wallpaper <file>")
+            sys.exit("theme wallpaper <файл>")
         wallpaper_set(data, current(), sys.argv[2])
         restart_swaybg()
         return
@@ -403,8 +403,8 @@ def main():
         cmd = themes[(themes.index(cur) + 1) % len(themes)] if cur in themes else themes[0]
     changed = apply(cmd)
     reload_apps()
-    print(f"theme: {cmd}  (files changed: {len(changed)})")
-    print("GTK/btop/nvim/qutebrowser pick it up on restart; Spotify: spicetify apply")
+    print(f"тема: {cmd}  (файлов изменено: {len(changed)})")
+    print("GTK/btop/nvim/qutebrowser подхватят при перезапуске; Spotify: spicetify apply")
 
 
 if __name__ == "__main__":

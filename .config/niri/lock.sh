@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# force the layout to english (us is first in the list, index 0)
+# Принудительно переключаем раскладку на английский (первая в списке us, индекс 0)
 niri msg action switch-layout 0
 
-# remove the old screenshot and take a new one
+# Удаляем старый скриншот и делаем новый
 rm -f /tmp/screen_lock.png
 grim /tmp/screen_lock.png
 
-# start the lockscreen
+# Запускаем локскрин
 hyprlock

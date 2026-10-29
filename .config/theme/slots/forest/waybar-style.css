@@ -7,14 +7,14 @@
     min-height: 0;
 }
 
-/* Single opaque bar */
+/* Единая непрозрачная панель */
 window#waybar {
     background-color: rgba(20, 27, 24, 0.98);
     border: 1px solid rgba(166, 227, 161, 0.08);
     border-radius: 10px;
 }
 
-/* All modules — transparent blocks inside the bar */
+/* Все модули — прозрачные блоки внутри панели */
 #custom-workspaces,
 #language,
 #custom-weather,
@@ -38,7 +38,7 @@ window#waybar {
     color: #cddbd0;
 }
 
-/* Workspaces (custom niri-workspaces-rs module) */
+/* Воркспейсы (кастомный модуль niri-workspaces-rs) */
 #custom-workspaces {
     padding: 0 6px;
     background: rgba(227, 192, 120, 0.07);
@@ -46,7 +46,7 @@ window#waybar {
     border-radius: 8px;
 }
 
-/* Accent 1 — green: "system life" */
+/* Акцент 1 — зелёный: «жизнь системы» */
 #temperature {
     color: #a6e3a1;
 }
@@ -78,7 +78,7 @@ window#waybar {
     font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", "Noto Sans Symbols 2", monospace;
 }
 
-/* Accent 2 — amber: "info/network" */
+/* Акцент 2 — янтарный: «информация/сеть» */
 #clock {
     color: #e3c078;
     font-weight: 700;
@@ -117,7 +117,7 @@ window#waybar {
     color: #e3c078;
 }
 
-/* Muted states */
+/* Приглушённые состояния */
 #pulseaudio.muted {
     color: #64766a;
 }
@@ -149,7 +149,7 @@ window#waybar {
     background: rgba(201, 116, 92, 0.30);
 }
 
-/* Status (signal) colors — alert states only */
+/* Статусные (сигнальные) цвета — только для тревожных состояний */
 #temperature.critical {
     color: #c9745c;
 }

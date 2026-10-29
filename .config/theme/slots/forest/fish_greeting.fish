@@ -1,4 +1,4 @@
-function fish_greeting --description "Forest greeting in the Forest palette"
+function fish_greeting --description "Лесное приветствие в палитре Forest"
     set -l nick anaidyss
     set -l host (hostname)
     set -l dim 64766a
@@ -6,7 +6,7 @@ function fish_greeting --description "Forest greeting in the Forest palette"
     set -l teal 59c2a5
     set -l amber e3c078
 
-    # Gradient banner: green → teal
+    # Градиентный баннер: зелёный → бирюзовый
     set -l grad a6e3a1 97dca2 87d6a3 78cfa3 68c9a4 59c2a5
     set -l art (figlet -f slant $nick)
     set -l i 1
@@ -21,7 +21,7 @@ function fish_greeting --description "Forest greeting in the Forest palette"
     end
     set_color normal
 
-    # System info
+    # Инфо о системе
     set -l pretty (grep '^PRETTY_NAME=' /etc/os-release | cut -d'=' -f2- | tr -d '"')
     set -l os (string replace ' Linux' '' -- (string replace -r ' \(.*\)' '' $pretty))
     set -l kern (uname -r | string replace -r -- '-.*' '')

@@ -30,7 +30,14 @@ switch with `theme toggle`.
   forest and a graphite value), see below
 - **menus**: veil-power / veil-sys / veil-wifi / veil-bt / veil-audio — gtk4 popups
   on gtk4-layer-shell built from one shared kit (`veilkit`), no external
-  processes where a d-bus/sysfs/libnm api exists
+  processes where a d-bus/sysfs/libnm api exists. fade + slide in/out, lists
+  update in place (no flicker, hover survives), ~0.3 s from click to window
+  (no `application_id` / d-bus registration, cairo renderer; a second launch
+  closes the open menu via pid file + SIGUSR1). veil-audio has a left / right /
+  both headphone test (keys l / r / b)
+- **speaker guard**: waybar button that hard-mutes the laptop speakers (alsa
+  `Speaker` + `Bass Speaker`) and leaves headphones alone; a small user service
+  re-mutes them if wireplumber unmutes (`speaker_guard.sh`, `speaker-guard.service`)
 - **fastfetch**: framed blocks closed on all sides by `ff-box`, fedora logo
   drawn in block characters (graphite)
 - **the rest**: btop, yazi, bat, eza, zoxide, mako, peaclock, pipes, gtk3/gtk4
@@ -71,7 +78,7 @@ font everywhere: JetBrainsMono Nerd Font, lives in ~/.local/share/fonts.
 ```text
 .config/
   niri/       wayland wm: config.kdl + lock.sh, vpn_status.sh
-  waybar/     bar: config, style, lid/pm modules
+  waybar/     bar: config, style, lid/pm/speaker-guard modules
   kitty/      terminal + forest theme
   fish/       shell config, starship.toml next to it
   nvim/       init.lua + lua/core + lua/plugins (full IDE, forest theme)

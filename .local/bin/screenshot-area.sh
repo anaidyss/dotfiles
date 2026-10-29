@@ -3,16 +3,16 @@
 DIR="$HOME/Pictures/Screenshots"
 mkdir -p "$DIR"
 
-# selection outline in #a6e3a1
+# Выделение рамкой с цветом #d87756
 GEOM=$(slurp -b "#18191780" -c "#d87756" -w 2)
 
-# escape or a stray click: just exit
+# Если нажали Escape или кликнули мимо — просто выходим
 [ -z "$GEOM" ] && exit 0
 
 FILE="$DIR/$(date +'%Y-%m-%d_%H-%M-%S').png"
 
-# capture, save to file and copy to clipboard
+# Захват, сохранение в файл и копирование в буфер
 grim -g "$GEOM" - | tee "$FILE" | wl-copy --type image/png
 
-# sound or notification (if dunst/mako is present)
-command -v notify-send >/dev/null && notify-send -a "Screenshot" "Screenshot saved" "$FILE"
+# Звук или уведомление (если есть dunst/mako)
+command -v notify-send >/dev/null && notify-send -a "Screenshot" "Скриншот сохранён" "$FILE"

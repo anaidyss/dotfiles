@@ -1,4 +1,4 @@
-# two-line prompt
+# промпт в стиле Veil: рамка из псевдографики, путь и ветка в скобках
 format = """
 $directory\
 $git_branch\

@@ -2,9 +2,9 @@
     "layer": "top",
     "position": "top",
     "height": 40,
-    "margin-top": 6,
-    "margin-left": 6,
-    "margin-right": 6,
+    "margin-top": 10,
+    "margin-left": 10,
+    "margin-right": 10,
     "spacing": 0,
     "expand-center": true,
     "fixed-center": false,
@@ -14,6 +14,7 @@
         "custom/workspaces",
         "custom/powermode",
         "custom/lid",
+        "custom/speaker",
         "custom/music",
         "custom/music-toggle",
         "clock",
@@ -50,8 +51,10 @@
     },
 
     "custom/calendar": {
-        "format": "",
-        "tooltip-format": "LMB: calendar · RMB: accounts (Google)",
+        "exec": "/home/anaidyss/.config/waybar/calendar.sh",
+        "return-type": "json",
+        "interval": 60,
+        "format": "{}",
         "tooltip": true,
         "on-click": "pgrep -x gnome-calendar >/dev/null && pkill -x gnome-calendar || gnome-calendar",
         "on-click-right": "env XDG_CURRENT_DESKTOP=GNOME gnome-control-center online-accounts"
@@ -139,9 +142,19 @@
         "tooltip": true
     },
 
+    "custom/speaker": {
+        "exec": "/home/anaidyss/.config/waybar/speaker_guard.sh status",
+        "return-type": "json",
+        "interval": 2,
+        "signal": 8,
+        "format": "{}",
+        "on-click": "/home/anaidyss/.config/waybar/speaker_guard.sh toggle",
+        "tooltip": true
+    },
+
     "custom/power": {
         "format": "⏻",
-        "tooltip": "LMB: V.E.I.L. · RMB: Forest (hyprlock)",
+        "tooltip": "ЛКМ: V.E.I.L. · ПКМ: Forest (hyprlock)",
         "on-click": "/home/anaidyss/.local/bin/veil-lock",
         "on-click-right": "/home/anaidyss/.config/niri/lock.sh",
         "on-click-middle": "/home/anaidyss/.local/bin/veil-power"

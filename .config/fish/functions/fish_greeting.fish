@@ -1,4 +1,4 @@
-function fish_greeting --description "Veil-style greeting (Graphite)"
+function fish_greeting --description "Приветствие в стиле Veil (Graphite)"
     set -l host (hostname)
     set -l frame 5c5c58
     set -l shade 5c5c58
@@ -7,7 +7,7 @@ function fish_greeting --description "Veil-style greeting (Graphite)"
     set -l dim 73736f
     set -l clay d87756
 
-    # banner: clay fill, grey outline and shadow (like the VEIL logo on the lock screen)
+    # баннер: заливка глиной, контур и тень — серым (как логотип VEIL на экране блокировки)
     set -l art \
         ' █████╗ ███╗   ██╗ █████╗ ██╗██████╗ ██╗   ██╗███████╗███████╗' \
         '██╔══██╗████╗  ██║██╔══██╗██║██╔══██╗╚██╗ ██╔╝██╔════╝██╔════╝' \

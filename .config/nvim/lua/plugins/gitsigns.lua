@@ -29,8 +29,8 @@ return {
     })
 
     -- forest colors for the signs
-    vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = "#a6e3a1" })
-    vim.api.nvim_set_hl(0, "GitSignsChange", { fg = "#e3c078" })
-    vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = "#c9745c" })
+    vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = "#d87756" })
+    vim.api.nvim_set_hl(0, "GitSignsChange", { fg = "#e8c987" })
+    vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = "#e5534b" })
   end,
 }

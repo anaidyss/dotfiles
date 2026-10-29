@@ -1,5 +1,5 @@
 /* ================================================
-   Forest CSD — window titlebars matching the waybar palette
+   Forest CSD — заголовки окон под палитру waybar
    bg #1e1f1c / accent #d87756 / teal #e8a838
    amber #e8c987 / terracotta #e5534b
    ================================================ */
@@ -16,7 +16,7 @@
 @define-color accent_bg_color #d87756;
 @define-color accent_fg_color #1e1f1c;
 
-/* Titlebar base */
+/* Основа заголовка */
 headerbar,
 windowheaderbar,
 .titlebar,
@@ -26,7 +26,7 @@ window.csd .titlebar {
     box-shadow: inset 0 -1px rgba(216, 119, 86, 0.12);
 }
 
-/* Inactive window */
+/* Неактивное окно */
 headerbar:backdrop,
 windowheaderbar:backdrop,
 .titlebar:backdrop {
@@ -35,7 +35,7 @@ windowheaderbar:backdrop,
     box-shadow: inset 0 -1px rgba(216, 119, 86, 0.06);
 }
 
-/* Window title — monospace, like waybar */
+/* Заголовок окна — моноширинный, как waybar */
 headerbar .title,
 windowheaderbar .title,
 .titlebar .title {
@@ -60,7 +60,7 @@ headerbar:backdrop .subtitle,
     color: #73736f;
 }
 
-/* Window control buttons */
+/* Кнопки управления окном */
 headerbar windowcontrols button,
 headerbar button.titlebutton,
 .titlebar button.titlebutton {
@@ -76,21 +76,21 @@ headerbar button.titlebutton:hover,
     color: #d5d5d3;
 }
 
-/* Close — terracotta */
+/* Закрыть — терракота */
 headerbar button.titlebutton.close:hover,
 .titlebar button.titlebutton.close:hover {
     background-color: #e5534b;
     color: #1e1f1c;
 }
 
-/* Minimize — amber */
+/* Свернуть — янтарь */
 headerbar button.titlebutton.minimize:hover,
 .titlebar button.titlebutton.minimize:hover {
     background-color: #e8c987;
     color: #1e1f1c;
 }
 
-/* Maximize — green */
+/* Развернуть — зелёный */
 headerbar button.titlebutton.maximize:hover,
 .titlebar button.titlebutton.maximize:hover {
     background-color: #d87756;

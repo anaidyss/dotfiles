@@ -1,5 +1,5 @@
 import sys
-# f 13x14 px, drawn by hand; '#' is fill
+# f 13x14 px, нарисована вручную; '#' — заливка
 BM=[
 "......########..",
 ".....##########.",
@@ -20,7 +20,7 @@ BM=[
 ]
 H=len(BM); W=len(BM[0])
 fill=lambda x,y: 1 if 0<=y<H and 0<=x<W and BM[y][x]=="#" else 0
-inner_w=W+2                # 1 margin column on the left, the rest on the right with the shadow
+inner_w=W+2                # 1 колонка поля слева, остальное справа с тенью
 rows=[]
 for cy in range(0,H,2):
     line=[]

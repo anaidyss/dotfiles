@@ -1,17 +1,17 @@
-# Veil: clay blocks, amber colons, grey date
-# Note: blocks are drawn with the background style (fill is empty), so the main keys are *-bg
+# Veil: глиняные блоки, янтарные двоеточия, серая дата
+# Важно: блоки рисуются фоновым стилем (fill пуст), поэтому главные ключи — *-bg
 style active-bg #d87756
 style inactive-bg #2e2e2c
 style colon-bg #d9b36a
 
-# fg — in case fill gets enabled
+# fg — на случай включения fill
 style active-fg #d87756
 style inactive-fg #2e2e2c
 style colon-fg #d9b36a
 
 style date #9a9a98
 
-# peaclock command line — same palette
+# Командная строка peaclock — в той же палитре
 style prompt #d9b36a
 style success #d87756
 style error #e5534b

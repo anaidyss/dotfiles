@@ -8,13 +8,18 @@ input {
 }
 
 
-// Chinese input: fcitx5 + Pinyin (toggle with Ctrl+Space).
-// Mod+Space is taken by toggle-window-floating, so the fcitx5 trigger is Ctrl+Space.
+// Ввод китайского: fcitx5 + Pinyin (переключение Ctrl+Space).
+// Mod+Space занят под toggle-window-floating, поэтому триггер fcitx5 — именно Ctrl+Space.
 environment {
     GTK_IM_MODULE "fcitx"
     QT_IM_MODULE  "fcitx"
     XMODIFIERS    "@im=fcitx"
     SDL_IM_MODULE "fcitx"
+}
+
+// xwayland-satellite 0.8.3 (собран вручную): чинит закрывающиеся меню Steam. Убрать, когда 0.8.3 появится в Fedora.
+xwayland-satellite {
+    path "/home/anaidyss/.local/share/xws-0.8.3/bin/xwayland-satellite"
 }
 
 spawn-at-startup "waybar"
@@ -25,7 +30,7 @@ spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 
-// looks: rounding, gaps and border
+// Внешний вид: скругления, отступы и обводка
 workspace "1"
 workspace "2"
 workspace "3"
@@ -35,7 +40,7 @@ workspace "6"
 workspace "7"
 
 
-// Window open/close animation
+// Анимация открытия/закрытия окон
 animations {
     window-open {
         duration-ms 200
@@ -45,6 +50,12 @@ animations {
 
 layout {
     gaps 6
+
+    struts {
+        left 4
+        right 4
+        bottom 4
+    }
     center-focused-column "never"
 
     preset-column-widths {
@@ -68,19 +79,19 @@ layout {
     }
 
 
-    // shadows off so the border color doesn't bleed under the window
+    // Отключаем тени, чтобы цвет рамки не рассеивался под окно
     shadow {
         off
     }
 }
 
 
-// Ask apps (Spotify/Electron, GTK etc.) not to draw their own borders and titlebars —
-// only the niri border, like the terminal. Apps need a restart after enabling this.
+// Просим приложения (Spotify/Electron, GTK и т.п.) не рисовать свои рамки и шапки —
+// только рамка niri, как у терминала. После включения нужно перезапустить приложения.
 prefer-no-csd
 
 
-// Dota 2 (and its gamescope wrapper): no transparency/rounding — the offscreen pass loads the iGPU
+// Dota 2 (и её gamescope-обёртка): без прозрачности/скруглений — offscreen-проход грузит iGPU
 window-rule {
     match app-id="dota|Dota"
     match app-id="gamescope"
@@ -89,7 +100,7 @@ window-rule {
     opacity 1.0
 }
 
-// Window transparency and rounding
+// Прозрачность и скругления окон
 window-rule {
     geometry-corner-radius 0
     clip-to-geometry true
@@ -97,7 +108,7 @@ window-rule {
     draw-border-with-background false
 }
 
-// Minecraft: no transparency (particles are hard to read through it), rounding stays from the global rule
+// Minecraft: убираем прозрачность (мешает читать частицы), скругления остаются от общего правила
 window-rule {
     match app-id="(?i)minecraft"
     opacity 1.0
@@ -113,8 +124,8 @@ window-rule {
     opacity 1.0
 }
 
-// Claude Code and OpenCode: no transparency, window as in the screenshot
-// (all kitty windows; filtered by title). Multiple matches = OR.
+// Claude Code и OpenCode: убираем прозрачность, окно как на скрине
+// (все kitty-окна; фильтруем по заголовку). Несколько match = OR.
 window-rule {
     match app-id="kitty" title="(?i)claude"
     match app-id="kitty" title="(?i)opencode"
@@ -122,54 +133,54 @@ window-rule {
     opacity 1.0
 }
 
-// keyboard (Mod = Super)
+// клавиатура (Mod = Super)
 binds {
-    // launching stuff
+    // запуск всего
     Mod+Return  { spawn "kitty"; }
     Mod+D       { spawn "fuzzel"; }
-    Mod+V       { spawn "sh" "-c" "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; } // clipboard history
-    Mod+Z       { spawn "/home/anaidyss/.local/bin/zh-fuzzel"; } // word → card (translation from the dictionary)
-    Mod+Shift+Z { spawn "/home/anaidyss/.local/bin/zh-fuzzel" "--ask"; } // word → own translation → card
-    Mod+O       { spawn "/home/anaidyss/.local/bin/zh-open"; } // notes in obsidian
-    Mod+N       { spawn "/home/anaidyss/.local/bin/zh-pick-note"; } // change the note the capture writes to
+    Mod+V       { spawn "sh" "-c" "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; } // история буфера обмена
+    Mod+Z       { spawn "/home/anaidyss/.local/bin/zh-fuzzel"; } // слово → карточка (перевод из словаря)
+    Mod+Shift+Z { spawn "/home/anaidyss/.local/bin/zh-fuzzel" "--ask"; } // слово → свой перевод → карточка
+    Mod+O       { spawn "/home/anaidyss/.local/bin/zh-open"; } // конспекты в obsidian
+    Mod+N       { spawn "/home/anaidyss/.local/bin/zh-pick-note"; } // сменить заметку, куда пишет захват
     Print       { spawn "/home/anaidyss/.local/bin/screenshot-area.sh"; }
     Mod+Shift+S { spawn "/home/anaidyss/.local/bin/screenshot-area.sh"; }
     Mod+Shift+E { quit; }
     Mod+Shift+P { spawn "/home/anaidyss/.config/niri/lock.sh"; } // hyprlock
     Mod+Shift+V { spawn "/home/anaidyss/.local/bin/veil-lock"; } // veil
 
-    // windows
+    // окна
     Mod+Q       { close-window; }
     Mod+F       { fullscreen-window; }
     Mod+Space   { toggle-window-floating; }
     Mod+R       { switch-preset-column-width; }
 
-    // window height: bigger / smaller / reset (this is how btop gets a bit over half the screen)
+    // высота окна: больше / меньше / сброс (так btop получает чуть больше половины экрана)
     Mod+Alt+J { set-window-height "+5%"; }
     Mod+Alt+K { set-window-height "-5%"; }
     Mod+Alt+R { reset-window-height; }
 
-    // focus hjkl
+    // фокус hjkl
     Mod+H { focus-column-left; }
     Mod+L { focus-column-right; }
     Mod+J { focus-window-down; }
     Mod+K { focus-window-up; }
 
-    // moving around
+    // перемещение
     Mod+Shift+H { move-column-left; }
     Mod+Shift+L { move-column-right; }
 
-    // window up/down, kept both shift and ctrl out of habit
+    // окно вверх/вниз, и shift и ctrl — обе оставил по привычке
     Mod+Shift+J { move-window-down; }
     Mod+Shift+K { move-window-up; }
     Mod+Ctrl+J  { move-window-down; }
     Mod+Ctrl+K  { move-window-up; }
 
-    // stacking
-    Mod+W { consume-window-into-column; } // pull the neighbor into the column
-    Mod+E { expel-window-from-column; }   // push it back out
+    // стэкинг
+    Mod+W { consume-window-into-column; } // затянуть соседа в колонку
+    Mod+E { expel-window-from-column; }   // вытолкнуть обратно
 
-    // workspaces
+    // воркспейсы
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
@@ -190,7 +201,7 @@ binds {
     Mod+Shift+8 { move-column-to-workspace 8; }
     Mod+Shift+9 { move-column-to-workspace 9; }
 
-    // volume and brightness via swayosd
+    // громкость и яркость через swayosd
     XF86AudioRaiseVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "raise"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "swayosd-client" "--output-volume" "lower"; }
     XF86AudioMute        allow-when-locked=true { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
@@ -198,13 +209,13 @@ binds {
     XF86MonBrightnessUp   allow-when-locked=true { spawn "swayosd-client" "--brightness" "raise"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "swayosd-client" "--brightness" "lower"; }
 
-    // music via playerctl (also works on the lock screen)
+    // музыка через playerctl (работает и на экране блокировки)
     XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }
     XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }
     XF86AudioPrev allow-when-locked=true { spawn "playerctl" "previous"; }
 }
 
-// veil-music — floating music terminal (right click on the player in waybar)
+// veil-music — плавающий музыкальный терминал (правый клик по плееру в waybar)
 window-rule {
     match app-id="veil-music"
 
@@ -213,21 +224,21 @@ window-rule {
     min-height 400
 }
 
-// wifi-menu — GTK network picker popup (opens on click on wifi in waybar)
+// wifi-menu — GTK-попап выбора сети (открывается кликом по wifi в waybar)
 window-rule {
     match app-id="wifi-menu"
 
     open-floating true
 }
 
-// bluetooth-menu — GTK Bluetooth popup (click on bluetooth in waybar)
+// bluetooth-menu — GTK-попап подключения Bluetooth (клик по блютусу в waybar)
 window-rule {
     match app-id="bluetooth-menu"
 
     open-floating true
 }
 
-// GNOME Calendar — floating window (calendar button in waybar)
+// GNOME Calendar — плавающее окно (кнопка календаря в waybar)
 window-rule {
     match app-id="org.gnome.Calendar"
 
@@ -236,14 +247,14 @@ window-rule {
     default-window-height { fixed 720; }
 }
 
-// Game mode: while dota2/gamescope is running, game-mode.kdl overrides
-// dangerous binds (Mod+Q close-window, Mod+Shift+E quit) with no-ops.
-// Managed by the game-mode-watcher service; binds in include take priority
-// over the ones defined above (niri >= 25.11).
+// Game-mode: пока работает dota2/gamescope, файл game-mode.kdl перезаписывает
+// опасные бинды (Mod+Q close-window, Mod+Shift+E quit) на no-op.
+// Управляется сервисом game-mode-watcher; binds в include имеют приоритет
+// над определёнными выше (niri >= 25.11).
 include optional=true "game-mode.kdl"
 
-// System-wide freeze while gaming: direct scanout of a fullscreen buffer with mismatched
-// size/aspect hangs the DRM atomic commit on the iGPU. We composite ourselves.
+// Фриз всей системы при игре: direct scanout фуллскрин-буфера несовпадающего
+// размера/пропорций вешает DRM atomic commit на iGPU. Композим сами.
 debug {
     disable-direct-scanout
 }

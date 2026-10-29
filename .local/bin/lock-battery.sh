@@ -1,5 +1,5 @@
 #!/bin/sh
-# battery icon + percent for hyprlock, color depends on the charge
+# иконка батареи + процент для hyprlock, цвет зависит от заряда
 
 PS=/sys/class/power_supply/BAT0
 [ -r "$PS/capacity" ] || exit 0

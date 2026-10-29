@@ -74,14 +74,14 @@ return {
     })
 
     -- coloring: directories — teal, executables/modified — amber, deletions — terra
-    vim.api.nvim_set_hl(0, "NeoTreeDirectoryIcon", { fg = "#59c2a5" })
-    vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#7fb8ad", bold = true })
-    vim.api.nvim_set_hl(0, "NeoTreeRootName", { fg = "#a6e3a1", bold = true })
-    vim.api.nvim_set_hl(0, "NeoTreeGitModified", { fg = "#e3c078" })
-    vim.api.nvim_set_hl(0, "NeoTreeGitAdded", { fg = "#a6e3a1" })
-    vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { fg = "#c9745c" })
-vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { fg = "#6fd0b3" })
-    vim.api.nvim_set_hl(0, "NeoTreeGitIgnored", { fg = "#64766a" })
+    vim.api.nvim_set_hl(0, "NeoTreeDirectoryIcon", { fg = "#e8a838" })
+    vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#9cc0ef", bold = true })
+    vim.api.nvim_set_hl(0, "NeoTreeRootName", { fg = "#d87756", bold = true })
+    vim.api.nvim_set_hl(0, "NeoTreeGitModified", { fg = "#e8c987" })
+    vim.api.nvim_set_hl(0, "NeoTreeGitAdded", { fg = "#d87756" })
+    vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { fg = "#e5534b" })
+vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { fg = "#8eeaea" })
+    vim.api.nvim_set_hl(0, "NeoTreeGitIgnored", { fg = "#73736f" })
 
     -- auto-open the tree on startup (IDE-style), unless a single file was passed
     vim.api.nvim_create_autocmd("VimEnter", {

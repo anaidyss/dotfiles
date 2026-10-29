@@ -9,7 +9,7 @@ return {
     event = "VeryLazy",
     config = function()
       require("notify").setup({
-        background_colour = "#131a16",
+        background_colour = "#1e1f1c",
         timeout = 3000,
         max_width = 60,
         max_height = 20,
@@ -130,13 +130,13 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("scrollbar").setup({
-        handle = { color = "#59c2a5" },
+        handle = { color = "#e8a838" },
         marks = {
-          Cursor = { color = "#a6e3a1" },
-          Error = { color = "#c9745c" },
-          Warn = { color = "#e3c078" },
-          Info = { color = "#7fb8ad" },
-          Hint = { color = "#a48bb5" },
+          Cursor = { color = "#d87756" },
+          Error = { color = "#e5534b" },
+          Warn = { color = "#e8c987" },
+          Info = { color = "#9cc0ef" },
+          Hint = { color = "#b79bd6" },
         },
       })
     end,

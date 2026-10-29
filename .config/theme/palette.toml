@@ -1,12 +1,12 @@
-# System palettes. Each role: [forest, graphite].
-# Only the right column (graphite) should be edited, and new roles can be added;
-# colors must be unique within a theme (otherwise switching is not reversible).
-# After editing:  theme audit  (coverage check)  then  theme graphite  (apply).
+# Палитры системы. Каждая роль: [forest, graphite].
+# Править можно только правую колонку (graphite) и добавлять роли;
+# внутри одной темы цвета обязаны быть уникальны (иначе переключение не обратимо).
+# После правок:  theme audit  (проверка покрытия)  и  theme graphite  (применить).
 
 themes = ["forest", "graphite"]
 
 [roles]
-# --- backgrounds: darkest to lightest ---
+# --- фоны: от самого тёмного к светлому ---
 black        = ["#000000", "#000000"]
 bg_abyss     = ["#0a0e0b", "#131412"]
 bg_player    = ["#0d120f", "#171816"]
@@ -46,14 +46,14 @@ bg_music_1   = ["#1b2620", "#282826"]
 bg_music_2   = ["#24332a", "#323230"]
 border_music = ["#2e3d33", "#3a3a38"]
 
-# --- main accent: green -> clay orange ---
+# --- главный акцент: зелёный -> янтарь ---
 accent       = ["#a6e3a1", "#d87756"]
 accent_hi    = ["#b8f5a6", "#f0a58a"]
 accent_2     = ["#c8eac2", "#f4b8a0"]
 accent_3     = ["#b8dcb2", "#ecae92"]
 accent_4     = ["#aad3a4", "#e89273"]
 
-# --- gold (info / ANSI yellow) ---
+# --- золото (инфо/жёлтый ANSI) ---
 gold         = ["#e3c078", "#e8c987"]
 yellow       = ["#d9b36a", "#d9b36a"]
 yellow_n     = ["#cfa95f", "#d4a24c"]
@@ -66,7 +66,7 @@ gold_menu    = ["#bfa05f", "#c99a45"]
 gold_menu_hi = ["#f0d08a", "#f5d98f"]
 gold_warm    = ["#e0b368", "#e8b95f"]
 
-# --- red (terracotta -> red) ---
+# --- красный (терракота -> красный) ---
 red          = ["#c9745c", "#e5534b"]
 red_hi       = ["#d99a82", "#f07a72"]
 red_tint_1   = ["#e8b7a2", "#f4aaa4"]
@@ -80,7 +80,7 @@ alert        = ["#ff6b57", "#ff5a50"]
 alert_2      = ["#f0775c", "#f26a5f"]
 alert_3      = ["#ff8a6b", "#ff7f76"]
 
-# --- teal: main secondary accent -> amber; conifer/ANSI blue -> light blue (where appropriate) ---
+# --- бирюза: основной вторичный акцент (teal) -> янтарь; хвойный/ANSI-синий -> голубой (уместные места) ---
 teal           = ["#59c2a5", "#e8a838"]
 blue_hi      = ["#6fd0b3", "#8eeaea"]
 cyan         = ["#4aa892", "#6fcfcf"]
@@ -100,8 +100,8 @@ nord_blue_hi = ["#9cc4e0", "#a0c8f2"]
 nord_blue_lo = ["#6f93b8", "#5f8fc0"]
 blue_sel     = ["#1e2a33", "#2c3340"]
 
-# --- former green (git/diff/ok): slate blue in graphite, no green at all ---
-# to bring sage back: change the right column of this block to #8aae78 / #9cbd8c / #a9c08e / #5a8560 etc.
+# --- бывший зелёный (git/diff/ok): в graphite — сланцево-голубой, зелёного нет совсем ---
+# вернуть шалфей: поменять правую колонку в этом блоке на #8aae78 / #9cbd8c / #a9c08e / #5a8560 и т.д.
 green        = ["#7cb87a", "#78b4c0"]
 green_hi     = ["#8fbf87", "#94c8d0"]
 green_nord   = ["#a3be8c", "#8ab9c4"]
@@ -114,7 +114,7 @@ grad_2       = ["#87d6a3", "#de8b4a"]
 grad_3       = ["#78cfa3", "#e29444"]
 grad_4       = ["#68c9a4", "#e59e3e"]
 
-# --- misc (workspaces binary, pm.fish) ---
+# --- прочее (бинарник воркспейсов, pm.fish) ---
 ws_green     = ["#98c379", "#8cbcc6"]
 ws_cyan      = ["#56b6c2", "#5fb0d8"]
 ws_amber     = ["#f5a623", "#e9a23b"]
@@ -123,14 +123,14 @@ ws_grey_2    = ["#999999", "#9b9b97"]
 cat_blue     = ["#89b4fa", "#8fb4e8"]
 cat_red      = ["#f38ba8", "#f08a8f"]
 
-# --- purple -> cool lavender ---
+# --- сиреневый -> холодный лавандовый ---
 purple       = ["#a48bb5", "#b79bd6"]
 purple_hi    = ["#c2a8cf", "#d3bcee"]
 purple_dim   = ["#6d5a7a", "#6f5f8f"]
 purple_nord  = ["#b48ead", "#c4a8e0"]
 
 [targets]
-# Files where colors are replaced in place (formats #rrggbb, #rrggbbaa, rgb(), rgba(r,g,b,..))
+# Файлы, где цвета подменяются на месте (форматы #rrggbb, #rrggbbaa, rgb(), rgba(r,g,b,..))
 files = [
   "kitty/current-theme.conf", "niri/config.kdl", "mako/config",
   "waybar/*.sh",
@@ -143,16 +143,16 @@ files = [
   "~/.local/share/veil-music/veil_music/*.py",
   "~/.local/share/veil-music/veil_music/*.tcss",
 ]
-# Files with values like  key = rrggbb[aa]  (no #)
+# Файлы со значениями вида  key = rrggbb[aa]  (без #)
 bare_files = ["fuzzel/*.ini", "spicetify/Themes/System/color.ini", "MangoHud/*.conf", "mangohud/*.conf"]
-# fish keeps colors in universal variables (only fish_color_* / fish_pager_color_* lines)
+# fish хранит цвета в universal variables (только строки fish_color_* / fish_pager_color_*)
 fish_files = ["fish/fish_variables"]
-# files where a color is a standalone 6-hex word (set_color a6e3a1, set -l x ..., -c a6e3a1)
+# файлы, где цвет — отдельное слово из 6 hex (set_color a6e3a1, set -l x ..., -c a6e3a1)
 token_files = ["fish/config.fish", "fish/functions/pm.fish"]
-# binaries containing #rrggbb strings (patched in place, length unchanged)
+# бинарники со строками #rrggbb (подмена на месте, длина не меняется)
 binary_files = ["waybar/niri-workspaces"]
 
-# Themes named in the file name: the forest file is canonical, the graphite file is generated from it
+# Темы с именем в имени файла: forest-файл — канон, graphite-файл генерируется из него
 [[targets.variants]]
 src = "btop/themes/forest.theme"
 dst = "btop/themes/{theme}.theme"
@@ -161,7 +161,7 @@ dst = "btop/themes/{theme}.theme"
 src = "bat/themes/Forest.tmTheme"
 dst = "bat/themes/{Theme}.tmTheme"
 
-# Which theme is selected in the program config
+# Какая тема выбрана в конфиге программы
 [[targets.selectors]]
 file = "btop/btop.conf"
 pattern = '^(color_theme\s*=\s*")([^"]*)(")'
@@ -172,8 +172,8 @@ file = "bat/config"
 pattern = '^(--theme=")([^"]*)(")'
 value = "{Theme}"
 
-# Wallpaper: wallpaper.jpg -> original (forest) or a tinted copy (cache); swaybg is restarted.
-# Wallpapers are changed with the wp command (it calls theme wallpaper).
+# Обои: wallpaper.jpg -> оригинал (forest) или тонированная копия (кэш), swaybg перезапускается.
+# Смена обоев — командой wp (она вызывает theme wallpaper).
 [wallpaper]
 link = "Pictures/Wallpapers/wallpaper.jpg"
 cache = "Pictures/Wallpapers/.tinted"
@@ -183,7 +183,7 @@ stops = ["#10110f", "#252621", "#4f4e45", "#9a947f"]
 level = "0%,72%"
 gamma = 1.0
 
-# GNOME/libadwaita accent color and GNOME desktop background
+# Акцентный цвет GNOME/libadwaita и фон рабочего стола GNOME
 [[gsettings]]
 schema = "org.gnome.desktop.interface"
 key = "accent-color"
@@ -196,7 +196,7 @@ key = "primary-color"
 forest = "#2c3a2e"
 graphite = "#2a2a28"
 
-# Style (not colors): window opacity. Graphite uses opaque windows, like Claude Code
+# Стиль (не цвета): прозрачность окон. Graphite — непрозрачные окна, как у Claude Code
 [[targets.settings]]
 file = "kitty/kitty.conf"
 pattern = '^(background_opacity )([0-9.]+)()$'
@@ -209,10 +209,10 @@ pattern = '(geometry-corner-radius \d+\n\s*clip-to-geometry true\n\s*opacity )([
 forest = "0.90"
 graphite = "1.0"
 
-# ===== Graphite: a monolith in the Veil style =====
+# ===== Graphite: монолит в стиле Veil =====
 
-# Slots: each theme has its own full file (the structure differs, not just the colors).
-# Edits to the live file are saved back to the previous theme's slot when switching.
+# Слоты: у каждой темы свой полный файл (структура отличается, а не только цвета).
+# Правки живого файла при смене темы сохраняются обратно в слот прежней темы.
 [[targets.swaps]]
 live = "waybar/style.css"
 forest = "theme/slots/forest/waybar-style.css"
@@ -233,14 +233,14 @@ live = "fish/functions/fish_greeting.fish"
 forest = "theme/slots/forest/fish_greeting.fish"
 graphite = "theme/slots/graphite/fish_greeting.fish"
 
-# yazi: icons keep amber/red/light blue, the rest is grey
+# yazi: иконки — янтарь/красный/голубой оставлены, остальное серое
 [[targets.filemaps]]
 file = "yazi/theme.toml"
 theme = "graphite"
 from = '^\[icon\]'
 map = { "#6f98cc" = "#8b8b87", "#f07a72" = "#da7a5c", "#d3bcee" = "#93938f", "#78b4c0" = "#9b9b93", "#b79bd6" = "#9d9d95" }
 
-# yazi: per-file-type colors -> grey (folders, exec, links, errors stay colored)
+# yazi: цвета по типам файлов -> серые (папки, exec, ссылки, ошибки остаются цветными)
 [[targets.filemaps]]
 file = "yazi/theme.toml"
 theme = "graphite"
@@ -248,14 +248,14 @@ from = '^\[filetype\]'
 to = '^\[icon\]'
 map = { "#d3bcee" = "#7099cd", "#b79bd6" = "#6c95c9", "#8eeaea" = "#bbbbb7", "#94c8d0" = "#bdbdb9" }
 
-# yazi: XDG folders like regular folders (accent)
+# yazi: XDG-папки как обычные папки (акцент)
 [[targets.settings]]
 file = "yazi/theme.toml"
 pattern = '(Library,Development\}/", fg = ")(#[0-9a-fA-F]{6})(")'
 forest = "#e3c078"
 graphite = "#d87756"
 
-# btop: box borders in a single grey
+# btop: рамки блоков одного серого цвета
 [[targets.settings]]
 file = "btop/themes/graphite.theme"
 pattern = '(theme\[cpu_box\]=")(#[0-9a-fA-F]{6})(")'
@@ -274,7 +274,7 @@ pattern = '(theme\[net_box\]=")(#[0-9a-fA-F]{6})(")'
 forest = "#e3c078"
 graphite = "#5c5c58"
 
-# yazi: folder names in bold amber; the selected row in clay
+# yazi: имена папок — янтарные жирные; выделенная строка — глиняная
 [[targets.settings]]
 file = "yazi/theme.toml"
 pattern = '(\{ url = "\*/", fg = ")(#[0-9a-fA-F]{6})(")'
@@ -287,7 +287,7 @@ pattern = '(\{ mime = "inode/directory", fg = ")(#[0-9a-fA-F]{6})(")'
 forest = "#a6e3a1"
 graphite = "#e8c987"
 
-# --- shape: square corners, thin borders, dense grid ---
+# --- форма: прямые углы, тонкие рамки, плотная сетка ---
 [[targets.settings]]
 file = "niri/config.kdl"
 pattern = '''(window-rule \{\n    geometry-corner-radius )(\d+)(\n    clip-to-geometry true)'''
@@ -433,7 +433,7 @@ forest = '''true'''
 graphite = '''false'''
 
 
-# mako: [ APP ] title and spacing on the menu grid
+# mako: заголовок [ ПРИЛОЖЕНИЕ ] и отступы по сетке меню
 [[targets.settings]]
 file = "mako/config"
 pattern = '''^(format=)([^\n]*)()$'''
@@ -452,13 +452,13 @@ pattern = '''^(padding=)(\d+)()$'''
 forest = "15"
 graphite = "12"
 
-# peaclock: each theme has its own config
+# peaclock: у каждой темы свой конфиг
 [[targets.swaps]]
 live = "~/.peaclock/config"
 forest = "theme/slots/forest/peaclock"
 graphite = "theme/slots/graphite/peaclock"
 
-# pipes: ANSI colors — clay (10), amber (3), grey (8) instead of green/teal
+# pipes: цвета ANSI — глина (10), янтарь (3), серый (8) вместо зелёного/бирюзового
 [[targets.settings]]
 file = "fish/config.fish"
 pattern = '''(alias pipes="pipes\.sh -t 0 -p 3 -R )((?:-c \d+ )+-c \d+)( -f 60")'''
@@ -489,13 +489,13 @@ pattern = '''^(sep_outer\s*=\s*)(\{[^\n]*\})()$'''
 forest = "{ open = \"\ue0b6\", close = \"\ue0b4\" }"
 graphite = "{ open = \"\", close = \"\" }"
 
-# Dolphin/KDE apps: color scheme from the palette (kdeglobals)
+# Dolphin/KDE-приложения: цветовая схема из палитры (kdeglobals)
 [[targets.swaps]]
 live = "kdeglobals"
 forest = "theme/slots/forest/kdeglobals"
 graphite = "theme/slots/graphite/kdeglobals"
 
-# yazi: the selected row is a clay bar with dark text (per section: sections have different original values)
+# yazi: выделенная строка — глиняная плашка с тёмным текстом (посекционно: у секций разные исходные значения)
 [[targets.settings]]
 file = "yazi/theme.toml"
 pattern = '''(\[tasks\]\n(?:[^\[]*?)^hovered\s*=\s*)(\{[^\n]*\})()'''
@@ -509,14 +509,14 @@ forest = '''{ reversed = true, bold = true }'''
 graphite = '''{ fg = "#1e1f1c", bg = "#d87756", bold = true }'''
 
 
-# yazi: leftover light blue/teal (symlinks, markers, hints) -> amber
+# yazi: остаточный голубой/бирюзовый (символьные ссылки, пометки, подсказки) -> янтарь
 [[targets.filemaps]]
 file = "yazi/theme.toml"
 theme = "graphite"
 to = '''^\[icon\]'''
 map = { "#9cc0ef" = "#dab46b", "#8eeaea" = "#e9ca88" }
 
-# yazi: current-row highlight is a rectangular clay bar ([indicator]); grey in the left column
+# yazi: подсветка текущей строки — прямоугольная глиняная плашка ([indicator]); в левой колонке — серая
 [[targets.settings]]
 file = "yazi/theme.toml"
 pattern = '''(\[indicator\]\n(?:[^\[]*?)^current\s*=\s*)(\{[^\n]*\})()'''
@@ -545,7 +545,7 @@ live = "gtk-3.0/veil.css"
 forest = "theme/slots/forest/veil-gtk.css"
 graphite = "theme/slots/graphite/veil-gtk.css"
 
-# GTK apps (Nautilus etc.): grey Veil folder icons and no window buttons (close with Mod+Q)
+# GTK-приложения (Nautilus и др.): серые иконки папок Veil и без кнопок окна (закрытие — Mod+Q)
 [[gsettings]]
 schema = "org.gnome.desktop.interface"
 key = "icon-theme"
@@ -575,7 +575,7 @@ pattern = '''("workbench\.colorTheme"\s*:\s*")([^"]*)(")'''
 forest = "Veil Forest"
 graphite = "Veil Graphite"
 
-# ===== Shape tokens for veilkit (menus/popups). Colors come from the roles above =====
+# ===== Токены формы для veilkit (меню/попапы). Цвета берутся из ролей выше =====
 [tokens.forest]
 radius = 12
 border = 1

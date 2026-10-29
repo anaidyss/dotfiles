@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""veil-wifi — Wi-Fi menu in the veilkit design system: [ WI-FI ]. libnm in-process, no nmcli."""
+"""veil-wifi — меню Wi-Fi в дизайн-системе veilkit: [ WI-FI ]. libnm в процессе, без nmcli."""
 import os
 import sys
 
@@ -46,7 +46,7 @@ def build(win):
     dev = next((d for d in client.get_devices() if isinstance(d, NM.DeviceWifi)), None)
     err = vk.ErrorLine()
     if dev is None:
-        vk.show_error(err, "Wi-Fi adapter not found")
+        vk.show_error(err, "Wi-Fi адаптер не найден")
         return vk.Panel("WI-FI", err)
 
     listbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
@@ -170,16 +170,15 @@ def build(win):
         if cfg and cfg.get_addresses():
             ip = cfg.get_addresses()[0].get_address()
         link_val.set_markup(vk.esc(f"{band(act.get_frequency())}  {dev.get_bitrate() // 1000} Mb/s  {ip}") if act else vk.span("—", vk.C["dim"]))
-        vk.clear(listbox)
         best = {}
         for ap in dev.get_access_points():
             s = ssid_of(ap)
             if s and (s not in best or ap.get_strength() > best[s].get_strength()):
                 best[s] = ap
-        for ap in sorted(best.values(), key=lambda a: (ssid_of(a) != act_ssid, -a.get_strength())):
-            listbox.append(row_for(ap, act_ssid))
+        rows = [row_for(ap, act_ssid) for ap in sorted(best.values(), key=lambda a: (ssid_of(a) != act_ssid, -a.get_strength()))]
         if not best and on:
-            listbox.append(Gtk.Label(label="NO NETWORKS", xalign=0, css_classes=["key"]))
+            rows.append(Gtk.Label(label="NO NETWORKS", xalign=0, css_classes=["key"]))
+        vk.fill(listbox, rows)
         vk.refit(win)
 
     sched = vk.debounce(250, refresh)

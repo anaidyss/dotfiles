@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""veil-audio — audio menu in the veilkit design system: [ AUDIO ]. pactl (PipeWire-pulse), refreshed via `pactl subscribe`."""
+"""veil-audio — меню звука в дизайн-системе veilkit: [ AUDIO ]. pactl (PipeWire-pulse), обновление по `pactl subscribe`."""
 import json
+import math
 import os
+import struct
 import sys
+import time
+import wave
 
 sys.path.insert(0, os.path.expanduser("~/.local/lib/veilkit"))
 import veilkit as vk  # noqa: E402
@@ -22,8 +26,48 @@ def pct(obj):
     return int(vols[0]["value_percent"].rstrip("%")) if vols else 0
 
 
+RATE, FREQ, DUR, AMP, FADE = 48000, 440.0, 0.7, 0.25, 0.03
+
+
+def test_wav(side):
+    """Стерео-тон 440 Гц в runtime-dir; side: left|right|both. Создаётся один раз."""
+    path = os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), f"veil-audio-test-{side}.wav")
+    if os.path.exists(path):
+        return path
+    n, fade = int(RATE * DUR), int(RATE * FADE)
+    frames = bytearray()
+    for i in range(n):
+        env = min(1.0, i / fade, (n - 1 - i) / fade)
+        s = int(32767 * AMP * env * math.sin(2 * math.pi * FREQ * i / RATE))
+        frames += struct.pack("<hh", s if side in ("left", "both") else 0, s if side in ("right", "both") else 0)
+    tmp = f"{path}.{os.getpid()}"
+    with wave.open(tmp, "wb") as w:
+        w.setnchannels(2)
+        w.setsampwidth(2)
+        w.setframerate(RATE)
+        w.writeframes(bytes(frames))
+    os.replace(tmp, path)
+    return path
+
+
+player = {"p": None, "err": None}
+
+
+def play(side):
+    if player["p"]:
+        player["p"].force_exit()
+    try:
+        player["p"] = Gio.Subprocess.new(["pw-play", test_wav(side)], Gio.SubprocessFlags.STDERR_SILENCE)
+    except (GLib.Error, OSError) as e:
+        vk.show_error(player["err"], f"тест: {getattr(e, 'message', e)}")
+
+
 def build(win):
-    err = vk.ErrorLine()
+    err = player["err"] = vk.ErrorLine()
+    test_row = Gtk.Box(spacing=4, homogeneous=True)
+    for hint, name, side in (("l", "left", "left"), ("r", "right", "right"), ("b", "both", "both")):
+        test_row.append(vk.ActionButton(hint, name, lambda s=side: play(s)))
+    win.connect("destroy", lambda *_: player["p"] and player["p"].force_exit())
     data = {"sinks": [], "sources": [], "dsink": "", "dsource": ""}
     boxes = {k: Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4) for k in ("sink", "source")}
     ctl = {}
@@ -39,38 +83,41 @@ def build(win):
         val = Gtk.Label(label="0%", width_chars=5, xalign=1)
         send = vk.debounce(80, lambda: vk.run_async(
             ["pactl", f"set-{cmd}-volume", f"@DEFAULT_{cmd.upper()}@", f"{int(scale.get_value())}%"], None))
-        busy = {"v": False}
+        busy, touched = {"v": False}, [0.0]
 
         def changed(_s):
             val.set_label(f"{int(scale.get_value())}%")
             if not busy["v"]:
+                touched[0] = time.monotonic()
                 send()
         scale.connect("value-changed", changed)
         mute = vk.Toggle("mute", False, lambda v: vk.run_async(["pactl", f"set-{cmd}-mute", f"@DEFAULT_{cmd.upper()}@", "1" if v else "0"], None))
         row = Gtk.Box(spacing=8)
         row.append(scale)
         row.append(val)
-        ctl[kind] = {"scale": scale, "val": val, "mute": mute, "busy": busy}
+        ctl[kind] = {"scale": scale, "val": val, "mute": mute, "busy": busy, "touched": touched}
         return row
 
     out_row, in_row = make_ctl("sink"), make_ctl("source")
 
     def render():
         for kind, key, dkey, items in (("sink", "sink", "dsink", data["sinks"]), ("source", "source", "dsource", data["sources"])):
-            vk.clear(boxes[kind])
             cur = next((o for o in items if o["name"] == data[dkey]), None)
+            rows = []
             for o in items:
                 if o["name"] != data[dkey] and (o["name"].startswith(HIDDEN) or o["name"].endswith(".monitor") or unplugged(o)):
                     continue
                 active = o["name"] == data[dkey]
                 mark = vk.span("●" if active else " ", vk.C["accent"])
                 label = f"{mark} {vk.esc((o.get('description') or o['name']).replace(PREFIX, 'HD AUDIO'))}"
-                boxes[kind].append(vk.ListButton(label, (lambda n=o["name"], k=key: vk.run_async(["pactl", f"set-default-{k}", n], None)), active))
+                rows.append(vk.ListButton(label, (lambda n=o["name"], k=key: vk.run_async(["pactl", f"set-default-{k}", n], None)), active))
+            vk.fill(boxes[kind], rows)
             c = ctl[kind]
             c["busy"]["v"] = True
-            c["scale"].set_value(pct(cur) if cur else 0)
+            if time.monotonic() - c["touched"][0] > 0.5:
+                c["scale"].set_value(pct(cur) if cur else 0)
+                c["val"].set_label(f"{pct(cur) if cur else 0}%")
             c["scale"].set_sensitive(cur is not None)
-            c["val"].set_label(f"{pct(cur) if cur else 0}%")
             c["busy"]["v"] = False
             c["mute"].set_state(bool(cur and cur.get("mute")))
         vk.refit(win)
@@ -81,12 +128,12 @@ def build(win):
         def part(name, parser):
             def cb(out):
                 if out is None:
-                    fail(f"pactl: no data ({name})")
+                    fail(f"pactl: нет данных ({name})")
                 else:
                     try:
                         data[name] = parser(out)
                     except (ValueError, KeyError):
-                        fail(f"pactl: could not parse output ({name})")
+                        fail(f"pactl: не разобрал вывод ({name})")
                 pending["n"] -= 1
                 if pending["n"] == 0:
                     render()
@@ -116,13 +163,15 @@ def build(win):
         win.connect("destroy", lambda *_: sub.force_exit())
     except GLib.Error as e:
         fail(f"pactl subscribe: {e.message}")
-    hint = Gtk.Label(label="CLICK: SET DEFAULT   ESC: CLOSE", xalign=0)
+    hint = Gtk.Label(label="CLICK: SET DEFAULT   L/R/B: TEST   ESC: CLOSE", xalign=0)
     hint.add_css_class("key")
     box = vk.Panel("AUDIO", err, vk.Section("output"), boxes["sink"], out_row, ctl["sink"]["mute"],
+                   test_row,
                    vk.Separator(), vk.Section("input"), boxes["source"], in_row, ctl["source"]["mute"],
                    vk.Separator(), hint)
     refresh()
     return box
 
 
-vk.run_menu("org.veil.audio", build, width=440)
+vk.run_menu("org.veil.audio", build, width=440, wait_data=True,
+            keys={k: (lambda s=s: play(s)) for k, s in (("l", "left"), ("r", "right"), ("b", "both"))})

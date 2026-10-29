@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""veil-bt — Bluetooth menu in the veilkit design system: [ BLUETOOTH ]. BlueZ over D-Bus, events instead of polling."""
+"""veil-bt — меню Bluetooth в дизайн-системе veilkit: [ BLUETOOTH ]. BlueZ по D-Bus, события вместо опроса."""
 import os
 import sys
 
@@ -103,7 +103,7 @@ def build(win):
     def pair(path, d):
         mac = d.get("Address", "")
         fail("")
-        # pairing needs an agent — the only external process (bluetoothctl)
+        # сопряжение требует агента — единственный внешний процесс (bluetoothctl)
         vk.run_async(["bluetoothctl", "--timeout", "30", "--agent", "NoInputNoOutput", "pair", mac],
                      lambda out: (set_prop(path, "org.bluez.Device1", "Trusted", GLib.Variant("b", True)),
                                   call(path, "org.bluez.Device1", "Connect", None, lambda o, m: fail(m)))
@@ -118,16 +118,13 @@ def build(win):
         else:
             n = sum(1 for d in st["devs"].values() if d.get("Connected"))
             st_val.set_markup(vk.span("SCANNING…", vk.C["accent2"]) if st["discovering"] else vk.esc(f"IDLE  {n} CONNECTED"))
-        vk.clear(listbox)
-        vk.clear(near_box)
         paired = [(p, d) for p, d in st["devs"].items() if d.get("Paired")]
         near = [(p, d) for p, d in st["devs"].items() if not d.get("Paired") and d.get("Alias") and not d.get("Alias").replace("-", ":").count(":") >= 5]
-        for p, d in sorted(paired, key=lambda x: (not x[1].get("Connected"), x[1].get("Alias", ""))):
-            listbox.append(row(p, d))
-        for p, d in sorted(near, key=lambda x: -(x[1].get("RSSI") or -999))[:8]:
-            near_box.append(row(p, d))
+        rows = [row(p, d) for p, d in sorted(paired, key=lambda x: (not x[1].get("Connected"), x[1].get("Alias", "")))]
         if not paired:
-            listbox.append(Gtk.Label(label="NO PAIRED DEVICES", xalign=0, css_classes=["key"]))
+            rows.append(Gtk.Label(label="NO PAIRED DEVICES", xalign=0, css_classes=["key"]))
+        vk.fill(listbox, rows)
+        vk.fill(near_box, [row(p, d) for p, d in sorted(near, key=lambda x: -(x[1].get("RSSI") or -999))[:8]])
         vk.refit(win)
 
     def set_power(v):
@@ -162,4 +159,4 @@ def build(win):
     return box
 
 
-vk.run_menu("org.veil.bt", build, width=440)
+vk.run_menu("org.veil.bt", build, width=440, wait_data=True)

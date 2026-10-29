@@ -53,17 +53,17 @@ return {
     config = function()
       -- rainbow: each indent level gets a slightly different forest tint
       local rainbow = {
-        "#2c3f34",
-        "#3a4f42",
-        "#4a5f52",
-        "#59c2a5",
-        "#7fb8ad",
-        "#a48bb5",
+        "#3c3c3a",
+        "#484845",
+        "#565653",
+        "#e8a838",
+        "#9cc0ef",
+        "#b79bd6",
       }
       for i, color in ipairs(rainbow) do
         vim.api.nvim_set_hl(0, "IblIndent" .. i, { fg = color })
       end
-      vim.api.nvim_set_hl(0, "IblScope", { fg = "#a6e3a1" })
+      vim.api.nvim_set_hl(0, "IblScope", { fg = "#d87756" })
       require("ibl").setup({
         indent = { char = "│", highlight = { "IblIndent1", "IblIndent2", "IblIndent3", "IblIndent4", "IblIndent5", "IblIndent6" } },
         scope = { enabled = true, highlight = "IblScope", show_start = false, show_end = false },

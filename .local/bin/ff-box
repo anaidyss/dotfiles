@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""ff-box — closes the ┌─ ┐ │ │ └─ ┘ boxes in fastfetch output (reads stdin, keeps ANSI).
-Box width is FFBOX_WIDTH (default 64); long lines are truncated with “…”."""
+"""ff-box — замыкает рамки ┌─ ┐ │ │ └─ ┘ в выводе fastfetch (читает stdin, ANSI сохраняется).
+Ширина рамки — FFBOX_WIDTH (по умолчанию 64); длинные строки обрезаются с «…»."""
 import os
 import re
 import sys
 import unicodedata
 
 W = int(os.environ.get("FFBOX_WIDTH", "64"))
-# column to the left of which the logo sits (the logo frame is also made of ┌│└ and must not count as a box)
+# колонка, левее которой лежит логотип (рамка логотипа тоже из ┌│└ и не должна считаться блоком)
 MIN_COL = int(os.environ.get("FFBOX_MIN_COL", "21"))
 SGR = re.compile(r"\x1b\[[0-9;]*m")
 BOX = "┌│└"
@@ -53,12 +53,12 @@ def fit(line):
             kind = t
             break
         col2 += cw(t)
-    # tail: strip trailing resets and spaces
+    # хвост: убираем завершающие reset и пробелы
     while toks and ((toks[-1][0]) or toks[-1][1] == " "):
         toks.pop()
-    right = left + W - 1                     # column of the right box character
-    rail = next((t for esc, t in toks if esc and t != "\x1b[0m" and t != "\x1b[m"), "")  # box color — the line's first SGR
-    # box color: the SGR right before the first box character
+    right = left + W - 1                     # колонка правого символа рамки
+    rail = next((t for esc, t in toks if esc and t != "\x1b[0m" and t != "\x1b[m"), "")  # цвет рамки — первый SGR строки
+    # цвет рамки: SGR прямо перед первым символом рамки
     last, col3 = "", 0
     for esc, t in toks:
         if esc:
@@ -68,7 +68,7 @@ def fit(line):
                 rail = last
                 break
             col3 += cw(t)
-    if vis(toks) > right:                    # truncate with “…”
+    if vis(toks) > right:                    # обрезка с «…»
         while vis(toks) > right - 1:
             toks.pop()
         toks.append((False, "…"))
